@@ -14,31 +14,15 @@
 #include <unordered_map>
 #include <vector>
 
-// TODO: using for all standard types: e.g day type = u8, solution type u64 etc.
+using DayType = std::uint8_t;
+using ResultType = std::int64_t;
 
 namespace internals {
 
 template <typename T, typename S>
 concept IsBaseOf = std::is_base_of<T, S>::value;
 
-std::expected<std::string, std::string> read(std::filesystem::path name) {
-
-  if (!std::filesystem::exists(name)) {
-    return std::unexpected(
-        std::format("File '{}' doesn't exist!", name.string()));
-  }
-
-  std::ifstream fileInputStream(name);
-
-  if (!fileInputStream.is_open()) {
-    return std::unexpected(
-        std::format("File '{}' couldn't be opened!", name.string()));
-  }
-
-  std::stringstream result;
-  result << fileInputStream.rdbuf();
-  return result.str();
-}
+std::expected<std::string, std::string> read(std::filesystem::path name);
 
 } // namespace internals
 
@@ -93,85 +77,29 @@ struct InputDescriptionGeneratorMultiple {
 
 InputDescriptionGeneratorMultiple
 operator>>(const InputDescriptionGeneratorSingle first,
-           const InputDescriptionGeneratorSingle second) {
-
-  return InputDescriptionGeneratorMultiple{first, second};
-}
+           const InputDescriptionGeneratorSingle second);
 
 InputDescriptionGeneratorMultiple
 operator>>(const InputDescriptionGeneratorSingle first,
-           const InputDescriptionGeneratorMultiple second) {
-
-  InputDescriptionGeneratorMultiple result{first};
-
-  for (const auto &elem : second.all) {
-    result.all.push_back(elem);
-  }
-
-  return result;
-}
+           const InputDescriptionGeneratorMultiple second);
 
 InputDescriptionGeneratorMultiple
 operator>>(const InputDescriptionGeneratorMultiple first,
-           const InputDescriptionGeneratorSingle second) {
-
-  InputDescriptionGeneratorMultiple result{};
-
-  for (const auto &elem : first.all) {
-    result.all.push_back(elem);
-  }
-  result.all.push_back(second);
-
-  return result;
-}
-
+           const InputDescriptionGeneratorSingle second);
 InputDescriptionGeneratorMultiple
 operator>>(const InputDescriptionGeneratorMultiple first,
-           const InputDescriptionGeneratorMultiple second) {
-  InputDescriptionGeneratorMultiple result{};
-
-  for (const auto &elem : first.all) {
-    result.all.push_back(elem);
-  }
-
-  for (const auto &elem : second.all) {
-    result.all.push_back(elem);
-  }
-
-  return result;
-}
-
+           const InputDescriptionGeneratorMultiple second);
 namespace Input {
 
-InputDescriptionGeneratorSingle SameInput(std::string name) {
+InputDescriptionGeneratorSingle SameInput(std::string name);
 
-  return InputDescriptionGeneratorSingle{
-      InputDescriptionGenerateTag::Input1 | InputDescriptionGenerateTag::Input2,
-      name};
-}
-
-InputDescriptionGeneratorSingle Input(std::string name) {
-
-  return InputDescriptionGeneratorSingle{
-      InputDescriptionGenerateTag::InputSingle, name};
-}
+InputDescriptionGeneratorSingle Input(std::string name);
 
 InputDescriptionGeneratorMultiple
-SameExample(std::string name, std::uint64_t result1, std::uint64_t result2) {
-
-  return InputDescriptionGeneratorMultiple{
-      InputDescriptionGeneratorSingle{
-          InputDescriptionGenerateTag::ExampleSingle, name, result1},
-      InputDescriptionGeneratorSingle{
-          InputDescriptionGenerateTag::ExampleSingle, name, result2}};
-}
+SameExample(std::string name, std::uint64_t result1, std::uint64_t result2);
 
 InputDescriptionGeneratorSingle ExampleInput(std::string name,
-                                             std::uint64_t result) {
-
-  return InputDescriptionGeneratorSingle{
-      InputDescriptionGenerateTag::ExampleSingle, name, result};
-}
+                                             std::uint64_t result);
 } // namespace Input
 
 struct AoCDay {
@@ -226,7 +154,7 @@ public:
 using AoCDayStorageType = std::pair<InputDescription, std::shared_ptr<AoCDay>>;
 
 namespace internals {
-std::unordered_map<std::uint8_t, AoCDayStorageType> available_days;
+extern std::unordered_map<std::uint8_t, AoCDayStorageType> available_days;
 
 }
 
@@ -247,11 +175,4 @@ struct DayRegister {
   }
 };
 
-std::optional<AoCDayStorageType> get_registered_day(std::uint8_t day) {
-
-  if (!internals::available_days.contains(day)) {
-    return std::nullopt;
-  }
-
-  return internals::available_days.at(day);
-}
+std::optional<AoCDayStorageType> get_registered_day(std::uint8_t day);
