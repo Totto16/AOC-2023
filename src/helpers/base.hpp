@@ -24,6 +24,8 @@ concept IsBaseOf = std::is_base_of<T, S>::value;
 
 std::expected<std::string, std::string> read(std::filesystem::path name);
 
+enum class Part { Part1, Part2 };
+
 } // namespace internals
 
 struct Example {
@@ -102,22 +104,76 @@ InputDescriptionGeneratorSingle ExampleInput(std::string name,
                                              std::uint64_t result);
 } // namespace Input
 
+struct SuccessResult {};
+
+// Rust like ? operator for std::expected, it throws an exception with
+// ex.error() if it has an error, it is used in the implementation, see there on
+// how to use it properly
+template <typename T> void operator~(const std::expected<T, std::string> &ex) {
+  if (!ex.has_value()) {
+    throw std::runtime_error(ex.error());
+  }
+}
+
 struct AoCDay {
 private:
   std::filesystem::path getFilePath(std::string name) {
     return std::filesystem::path{std::format("src/day {:02}/{}", day, name)};
   }
 
-  void executeExample(std::uint8_t part, Example example) {
-    // TODO
-    (void)example;
-    (void)part;
+  std::expected<SuccessResult, std::string> executeExample(internals::Part part,
+                                                           Example example) {
+
+    const uint8_t num = part == internals::Part::Part1 ? 1 : 2;
+
+    try {
+
+      const auto read_file = internals::read(getFilePath(example.input_name));
+      if (!read_file.has_value()) {
+        throw std::runtime_error(read_file.error());
+      }
+
+      const auto result = num == 1 ? this->solvePart1(read_file.value(), true)
+                                   : this->solvePart2(read_file.value(), true);
+
+      if (result == example.result) {
+        std::cout << std::format("Solved Example for part {} successfully\n",
+                                 num);
+      } else {
+        throw std::runtime_error(std::format(
+            "Error in Example for part {}: expected '{}' but got '{}'!", num,
+            example.result, result));
+      }
+
+      return SuccessResult{};
+
+    } catch (std::exception &ex) {
+      return std::unexpected(std::format(
+          "Error while running example for part {}: {}", num, ex.what()));
+    }
   }
 
-  void executePart(std::uint8_t part, std::string name) {
-    // TODO
-    (void)name;
-    (void)part;
+  std::expected<SuccessResult, std::string> executePart(internals::Part part,
+                                                        std::string name) {
+    const uint8_t num = part == internals::Part::Part1 ? 1 : 2;
+
+    try {
+
+      const auto read_file = internals::read(getFilePath(name));
+      ~read_file;
+
+      const auto result = num == 1 ? this->solvePart1(read_file.value(), true)
+                                   : this->solvePart2(read_file.value(), true);
+
+      std::cout << std::format("The solution for part {} is : '{}'\n", num,
+                               result);
+
+      return SuccessResult{};
+
+    } catch (std::exception &ex) {
+      return std::unexpected(
+          std::format("Error while running part {}: {}", num, ex.what()));
+    }
   }
 
 public:
@@ -133,21 +189,27 @@ public:
   virtual std::uint64_t solvePart2(std::string input,
                                    bool is_example) const = 0;
 
-  std::expected<bool, std::string> start(InputDescription description) {
+  std::expected<SuccessResult, std::string>
+  start(InputDescription description) {
 
-    if (description.example_1.has_value()) {
-      executeExample(1, description.example_1.value());
+    try {
+
+      if (description.example_1.has_value()) {
+        ~executeExample(internals::Part::Part1, description.example_1.value());
+      }
+
+      ~executePart(internals::Part::Part1, description.input_1_name);
+
+      if (description.example_2.has_value()) {
+        ~executeExample(internals::Part::Part2, description.example_2.value());
+      }
+
+      ~executePart(internals::Part::Part2, description.input_2_name);
+
+      return SuccessResult{};
+    } catch (std::exception &ex) {
+      return std::unexpected(ex.what());
     }
-
-    executePart(1, description.input_1_name);
-
-    if (description.example_2.has_value()) {
-      executeExample(2, description.example_2.value());
-    }
-
-    executePart(2, description.input_2_name);
-
-    return true;
   }
 };
 
