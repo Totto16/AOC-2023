@@ -1,4 +1,7 @@
+src_files += files('day01.cpp')
 
-header_files += files('template.hpp')
-src_files += files('template.cpp')
+fs = import('fs')
 
+foreach f : ['example_1.txt', 'example_2.txt', 'input.txt']
+    fs.copyfile(f)
+endforeach
