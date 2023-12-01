@@ -5,7 +5,7 @@ Welcome to my Advent of Code 2023 repository! The solutions are written in C++23
 ## Running the solutions
 For running the code you need [meson](https://mesonbuild.com/Quick-guide.html#installation-using-python) and a C++23 std compatible compiler (e.g. GCC)
 
-Then you can use meson to compile and than exeucte the solutions
+Then you can use meson to compile and than execute the solutions
 
 
 ```bash
