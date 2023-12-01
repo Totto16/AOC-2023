@@ -1,5 +1,6 @@
-# AoC 2023
+[![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2FTotto16%2FAOC-2023&countColor=%2337d67a&style=plastic)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2FTotto16%2FAOC-2023)
 
+# AoC 2023
 Welcome to my Advent of Code 2023 repository! The solutions are written in C++23 using Meson as build system. The solutions aren't optimized for speed, more for readability.
 
 ## Running the solutions
