@@ -2,17 +2,18 @@
 
 #pragma once
 
+#include <argparse/argparse.hpp>
 #include <filesystem>
 #include <string>
 #include <vector>
 
-#include <argparse/argparse.hpp>
+#include "helpers/base.hpp"
 
 #define STRINGIFY(a) STR_IMPL(a)
 #define STR_IMPL(a) #a
 
 struct Arguments {
-  std::uint8_t day;
+  DayType day;
 };
 
 [[nodiscard]] const Arguments

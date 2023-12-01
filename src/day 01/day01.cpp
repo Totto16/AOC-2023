@@ -8,11 +8,11 @@ struct AoCDay01 : AoCDay {
     //
   }
 
-  std::uint64_t
+  ResultType
   solvePart1(std::string input,
              [[maybe_unused]] const bool is_example) const override {
 
-    std::uint64_t result = 0;
+    ResultType result = 0;
 
     for (const auto &temp : splitByNewLine(input)) {
 
@@ -34,14 +34,14 @@ struct AoCDay01 : AoCDay {
     return result;
   }
 
-  std::uint64_t
+  ResultType
   solvePart2(std::string input,
              [[maybe_unused]] const bool is_example) const override {
 
     const std::vector<std::string> mappings = {
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
 
-    std::uint64_t result = 0;
+    ResultType result = 0;
 
     for (const auto &temp : splitByNewLine(input)) {
 

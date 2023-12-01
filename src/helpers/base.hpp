@@ -30,7 +30,7 @@ enum class Part { Part1, Part2 };
 
 struct Example {
   std::string input_name;
-  std::uint64_t result;
+  ResultType result;
 };
 
 struct InputDescription {
@@ -58,7 +58,7 @@ enum InputDescriptionGenerateTag : std::uint8_t {
 struct InputDescriptionGeneratorSingle {
   InputDescriptionGenerateTag tag;
   std::string state;
-  std::uint64_t value = 0;
+  ResultType value = 0;
 };
 
 struct InputDescriptionGeneratorMultiple {
@@ -129,10 +129,10 @@ InputDescriptionGeneratorMultiple SameInput(std::string name);
 InputDescriptionGeneratorSingle Input(std::string name);
 
 InputDescriptionGeneratorMultiple
-SameExample(std::string name, std::uint64_t result1, std::uint64_t result2);
+SameExample(std::string name, ResultType result1, ResultType result2);
 
 InputDescriptionGeneratorSingle ExampleInput(std::string name,
-                                             std::uint64_t result);
+                                             ResultType result);
 } // namespace Input
 
 struct SuccessResult {};
@@ -208,17 +208,15 @@ private:
   }
 
 public:
-  std::uint8_t day;
+  DayType day;
 
-  AoCDay(std::uint8_t day) : day{day} {
+  AoCDay(DayType day) : day{day} {
     //
   }
 
-  virtual std::uint64_t solvePart1(std::string input,
-                                   bool is_example) const = 0;
+  virtual ResultType solvePart1(std::string input, bool is_example) const = 0;
 
-  virtual std::uint64_t solvePart2(std::string input,
-                                   bool is_example) const = 0;
+  virtual ResultType solvePart2(std::string input, bool is_example) const = 0;
 
   std::expected<SuccessResult, std::string>
   start(InputDescription description) {
@@ -250,7 +248,7 @@ namespace internals {
 
 struct global_init {
 
-  static std::shared_ptr<std::unordered_map<std::uint8_t, AoCDayStorageType>>
+  static std::shared_ptr<std::unordered_map<DayType, AoCDayStorageType>>
   available_days();
 };
 
@@ -274,4 +272,4 @@ struct DayRegister {
   }
 };
 
-std::optional<AoCDayStorageType> get_registered_day(std::uint8_t day);
+std::optional<AoCDayStorageType> get_registered_day(DayType day);

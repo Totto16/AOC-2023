@@ -2,8 +2,6 @@
 
 #include "base.hpp"
 
-// TODO: using for all standard types: e.g day type = u8, solution type u64 etc.
-
 std::expected<std::string, std::string>
 internals::read(std::filesystem::path name) {
 
@@ -89,9 +87,8 @@ InputDescriptionGeneratorSingle Input::Input(std::string name) {
                                          name};
 }
 
-InputDescriptionGeneratorMultiple Input::SameExample(std::string name,
-                                                     std::uint64_t result1,
-                                                     std::uint64_t result2) {
+InputDescriptionGeneratorMultiple
+Input::SameExample(std::string name, ResultType result1, ResultType result2) {
 
   return InputDescriptionGeneratorMultiple{
       InputDescriptionGeneratorSingle{InputDescriptionGenerateTag::ExampleTag,
@@ -101,13 +98,13 @@ InputDescriptionGeneratorMultiple Input::SameExample(std::string name,
 }
 
 InputDescriptionGeneratorSingle Input::ExampleInput(std::string name,
-                                                    std::uint64_t result) {
+                                                    ResultType result) {
 
   return InputDescriptionGeneratorSingle{
       InputDescriptionGenerateTag::ExampleTag, name, result};
 }
 
-std::optional<AoCDayStorageType> get_registered_day(std::uint8_t day) {
+std::optional<AoCDayStorageType> get_registered_day(DayType day) {
 
   if (!internals::global_init::available_days()->contains(day)) {
     return std::nullopt;
@@ -116,10 +113,9 @@ std::optional<AoCDayStorageType> get_registered_day(std::uint8_t day) {
   return internals::global_init::available_days()->at(day);
 }
 
-std::shared_ptr<std::unordered_map<std::uint8_t, AoCDayStorageType>>
+std::shared_ptr<std::unordered_map<DayType, AoCDayStorageType>>
 internals::global_init::available_days() {
-  static std::shared_ptr<std::unordered_map<std::uint8_t, AoCDayStorageType>>
-      temp = std::make_shared<
-          std::unordered_map<std::uint8_t, AoCDayStorageType>>();
+  static std::shared_ptr<std::unordered_map<DayType, AoCDayStorageType>> temp =
+      std::make_shared<std::unordered_map<DayType, AoCDayStorageType>>();
   return temp;
 }

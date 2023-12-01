@@ -2,6 +2,7 @@
 
 #include "arguments.hpp"
 
+
 const Arguments parse_arguments(const std::vector<std::string> &arguments) {
 
   argparse::ArgumentParser program{arguments.at(0), STRINGIFY(VERSION_STRING),
@@ -10,13 +11,13 @@ const Arguments parse_arguments(const std::vector<std::string> &arguments) {
   program.add_argument("day")
       .help("The day to execute")
       .required()
-      .scan<'u', std::uint8_t>();
+      .scan<'u', DayType>();
   ;
 
   try {
     program.parse_args(arguments);
 
-    const std::uint8_t day = program.get<std::uint8_t>("day");
+    const DayType day = program.get<DayType>("day");
 
     return Arguments{day};
 
