@@ -29,8 +29,8 @@ enum class Part { Part1, Part2 };
 } // namespace internals
 
 struct Example {
-  std::uint64_t result;
   std::string input_name;
+  std::uint64_t result;
 };
 
 struct InputDescription {
@@ -50,15 +50,13 @@ struct InputDescription {
 };
 
 enum InputDescriptionGenerateTag : std::uint8_t {
-  Input1 = 0b1,
-  Input2 = 0b10,
-  InputSingle = 0b100,
-  ExampleSingle = 0b1000
+  InputTag,
+  ExampleTag
 
 };
 
 struct InputDescriptionGeneratorSingle {
-  std::uint8_t tag;
+  InputDescriptionGenerateTag tag;
   std::string state;
   std::uint64_t value = 0;
 };
@@ -73,7 +71,40 @@ struct InputDescriptionGeneratorMultiple {
   }
 
   operator InputDescription() {
-    return InputDescription{"", "", std::nullopt, std::nullopt};
+    std::string input_1_name;
+    std::string input_2_name;
+    std::uint8_t input_i = 0;
+
+    std::optional<Example> example_1;
+    std::optional<Example> example_2;
+    std::uint8_t example_i = 0;
+    for (const auto &elem : this->all) {
+      if (elem.tag == InputDescriptionGenerateTag::InputTag) {
+        if (input_i >= 2) {
+          throw std::runtime_error(std::format("To much inputs given!"));
+        }
+        if (input_i == 0) {
+          input_1_name = elem.state;
+        } else {
+          input_2_name = elem.state;
+        }
+
+        ++input_i;
+      } else {
+        if (example_i >= 2) {
+          throw std::runtime_error(std::format("To much Examples given!"));
+        }
+        if (example_i == 0) {
+          example_1 = Example{elem.state, elem.value};
+        } else {
+          example_2 = Example{elem.state, elem.value};
+        }
+
+        ++example_i;
+      }
+    }
+
+    return InputDescription{input_1_name, input_2_name, example_1, example_2};
   }
 };
 
@@ -93,7 +124,7 @@ operator>>(const InputDescriptionGeneratorMultiple first,
            const InputDescriptionGeneratorMultiple second);
 namespace Input {
 
-InputDescriptionGeneratorSingle SameInput(std::string name);
+InputDescriptionGeneratorMultiple SameInput(std::string name);
 
 InputDescriptionGeneratorSingle Input(std::string name);
 

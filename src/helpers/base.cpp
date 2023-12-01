@@ -74,17 +74,19 @@ operator>>(const InputDescriptionGeneratorMultiple first,
   return result;
 }
 
-InputDescriptionGeneratorSingle Input::SameInput(std::string name) {
+InputDescriptionGeneratorMultiple Input::SameInput(std::string name) {
 
-  return InputDescriptionGeneratorSingle{
-      InputDescriptionGenerateTag::Input1 | InputDescriptionGenerateTag::Input2,
-      name};
+  return InputDescriptionGeneratorMultiple{
+      InputDescriptionGeneratorSingle{InputDescriptionGenerateTag::InputTag,
+                                      name},
+      InputDescriptionGeneratorSingle{InputDescriptionGenerateTag::InputTag,
+                                      name}};
 }
 
 InputDescriptionGeneratorSingle Input::Input(std::string name) {
 
-  return InputDescriptionGeneratorSingle{
-      InputDescriptionGenerateTag::InputSingle, name};
+  return InputDescriptionGeneratorSingle{InputDescriptionGenerateTag::InputTag,
+                                         name};
 }
 
 InputDescriptionGeneratorMultiple Input::SameExample(std::string name,
@@ -92,17 +94,17 @@ InputDescriptionGeneratorMultiple Input::SameExample(std::string name,
                                                      std::uint64_t result2) {
 
   return InputDescriptionGeneratorMultiple{
-      InputDescriptionGeneratorSingle{
-          InputDescriptionGenerateTag::ExampleSingle, name, result1},
-      InputDescriptionGeneratorSingle{
-          InputDescriptionGenerateTag::ExampleSingle, name, result2}};
+      InputDescriptionGeneratorSingle{InputDescriptionGenerateTag::ExampleTag,
+                                      name, result1},
+      InputDescriptionGeneratorSingle{InputDescriptionGenerateTag::ExampleTag,
+                                      name, result2}};
 }
 
 InputDescriptionGeneratorSingle Input::ExampleInput(std::string name,
                                                     std::uint64_t result) {
 
   return InputDescriptionGeneratorSingle{
-      InputDescriptionGenerateTag::ExampleSingle, name, result};
+      InputDescriptionGenerateTag::ExampleTag, name, result};
 }
 
 std::optional<AoCDayStorageType> get_registered_day(std::uint8_t day) {
