@@ -24,10 +24,16 @@ inc_dirs = []
 
 subdir('src')
 
+compile_flags = [
+    '-DPROGRAM_NAME=' + meson.project_name(),
+    '-DVERSION_STRING=' + meson.project_version(),
+]
+
 executable(
     'aoc',
     src_files,
     header_files,
     dependencies: deps,
+    cpp_args: compile_flags,
     include_directories: inc_dirs,
 )
