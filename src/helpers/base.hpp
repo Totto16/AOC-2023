@@ -154,24 +154,30 @@ public:
 using AoCDayStorageType = std::pair<InputDescription, std::shared_ptr<AoCDay>>;
 
 namespace internals {
-extern std::unordered_map<std::uint8_t, AoCDayStorageType> available_days;
 
-}
+struct global_init {
+
+  static std::shared_ptr<std::unordered_map<std::uint8_t, AoCDayStorageType>>
+  available_days();
+};
+
+} // namespace internals
 
 template <typename Day>
   requires internals::IsBaseOf<AoCDay, Day>
 struct DayRegister {
 
   DayRegister(InputDescription description) {
+
     std::shared_ptr<Day> instance = std::make_shared<Day>();
-    if (internals::available_days.contains(instance->day)) {
+    if (internals::global_init::available_days()->contains(instance->day)) {
       throw std::runtime_error(std::format(
           "Can't register Day {:02}, since it's already registered!",
           instance->day));
     }
 
-    internals::available_days.insert_or_assign(
-        instance->day, AoCDayStorageType{description, std::move(instance)});
+    internals::global_init::available_days()->insert_or_assign(
+        instance->day, AoCDayStorageType{description, instance});
   }
 };
 

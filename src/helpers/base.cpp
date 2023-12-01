@@ -107,11 +107,17 @@ InputDescriptionGeneratorSingle Input::ExampleInput(std::string name,
 
 std::optional<AoCDayStorageType> get_registered_day(std::uint8_t day) {
 
-  if (!internals::available_days.contains(day)) {
+  if (!internals::global_init::available_days()->contains(day)) {
     return std::nullopt;
   }
 
-  return internals::available_days.at(day);
+  return internals::global_init::available_days()->at(day);
 }
 
-std::unordered_map<std::uint8_t, AoCDayStorageType> internals::available_days{};
+std::shared_ptr<std::unordered_map<std::uint8_t, AoCDayStorageType>>
+internals::global_init::available_days() {
+  static std::shared_ptr<std::unordered_map<std::uint8_t, AoCDayStorageType>>
+      temp = std::make_shared<
+          std::unordered_map<std::uint8_t, AoCDayStorageType>>();
+  return temp;
+}
