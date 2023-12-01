@@ -1,9 +1,8 @@
-#include <filesystem>
 #include <iostream>
-#include <memory>
 #include <string>
 #include <vector>
 
+#include "helpers/arguments.hpp"
 #include "helpers/parser.hpp"
 
 int main(const int argc, char const *argv[]) {
@@ -17,6 +16,9 @@ int main(const int argc, char const *argv[]) {
     }
 
     const Arguments program_args = parse_arguments(arguments);
+
+    // TODO
+    std::cout << static_cast<int>(program_args.day) << "\n";
 
   } catch (const std::exception &err) {
     std::cerr << "Error: " << err.what() << std::endl;

@@ -7,16 +7,16 @@ const Arguments parse_arguments(const std::vector<std::string> &arguments) {
   argparse::ArgumentParser program{arguments.at(0), STRINGIFY(VERSION_STRING),
                                    argparse::default_arguments::all};
 
-  program.add_argument("day").help("The file to scan").required().scan<'i'>;
+  program.add_argument("day")
+      .help("The day to execute")
+      .required()
+      .scan<'u', std::uint8_t>();
+  ;
 
   try {
     program.parse_args(arguments);
 
-    const int = program.get<int>("day");
-
-    if (day < 0 && day > std::limits<std::uint8_t>) {
-      throw std::runtime_error("Day value to large!");
-    }
+    const std::uint8_t day = program.get<std::uint8_t>("day");
 
     return Arguments{day};
 

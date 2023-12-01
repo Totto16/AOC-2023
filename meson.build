@@ -17,6 +17,10 @@ deps += dependency(
     'argparse',
 )
 
+deps += dependency(
+    'lexy',
+)
+
 src_files = []
 header_files = []
 inc_dirs = []

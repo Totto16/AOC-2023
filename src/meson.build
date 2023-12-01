@@ -1,9 +1,9 @@
 
 src_files += files('main.cpp')
 
-subdir('template')
+subdir('helpers')
 
-foreach day : ['01']
+foreach day : []
     subdir('day ' + day)
 endforeach
 
