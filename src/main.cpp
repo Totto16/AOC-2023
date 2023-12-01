@@ -19,27 +19,40 @@ int main(const int argc, char const *argv[]) {
 
     const Arguments program_args = parse_arguments(arguments);
 
-    const auto day = program_args.day;
+    const auto parsed_day = program_args.day;
 
-    const std::optional<AoCDayStorageType> registered_day =
-        get_registered_day(day);
+    std::vector<DayType> days{};
+    if (parsed_day == 0) {
 
-    if (!registered_day.has_value()) {
+      for (const auto &available_day : get_available_days()) {
+        days.push_back(available_day);
+      }
 
-      std::cerr << std::format("No such registered Day {:02} !\n", day);
-      std::exit(2);
+    } else {
+      days.push_back(parsed_day);
     }
 
-    const auto &[description, day_class] = registered_day.value();
+    for (const auto &day : days) {
+      std::cout << std::format("Running day {:02}\n", day);
 
-    const auto result = day_class->start(description);
+      const std::optional<AoCDayStorageType> registered_day =
+          get_registered_day(day);
 
-    if (!result.has_value()) {
-      std::cerr << std::format("Error in executing day {:02}: {}\n", day,
-                               result.error());
-      std::exit(3);
+      if (!registered_day.has_value()) {
+        std::cerr << std::format("No such registered Day {:02}!\n", day);
+        std::exit(2);
+      }
+
+      const auto &[description, day_class] = registered_day.value();
+
+      const auto result = day_class->start(description);
+
+      if (!result.has_value()) {
+        std::cerr << std::format("Error in executing day {:02}: {}\n", day,
+                                 result.error());
+        std::exit(3);
+      }
     }
-
   } catch (const std::exception &err) {
     std::cerr << "Error: " << err.what() << std::endl;
     std::exit(1);

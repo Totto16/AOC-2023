@@ -9,7 +9,7 @@ const Arguments parse_arguments(const std::vector<std::string> &arguments) {
                                    argparse::default_arguments::all};
 
   program.add_argument("day")
-      .help("The day to execute")
+      .help("The day to execute (0-25 -> 0 means all)")
       .required()
       .scan<'u', DayType>();
   ;

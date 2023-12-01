@@ -113,6 +113,18 @@ std::optional<AoCDayStorageType> get_registered_day(DayType day) {
   return internals::global_init::available_days()->at(day);
 }
 
+std::vector<DayType> get_available_days() {
+
+  std::vector<DayType> keys{};
+  keys.reserve(internals::global_init::available_days()->size());
+
+  for (const auto &[key, _] : *internals::global_init::available_days()) {
+    keys.push_back(key);
+  }
+
+  return keys;
+}
+
 std::shared_ptr<std::unordered_map<DayType, AoCDayStorageType>>
 internals::global_init::available_days() {
   static std::shared_ptr<std::unordered_map<DayType, AoCDayStorageType>> temp =

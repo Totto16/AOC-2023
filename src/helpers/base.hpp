@@ -273,3 +273,5 @@ struct DayRegister {
 };
 
 std::optional<AoCDayStorageType> get_registered_day(DayType day);
+
+std::vector<DayType> get_available_days();
