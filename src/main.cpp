@@ -1,11 +1,11 @@
+#include <format>
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include "helpers/arguments.hpp"
+#include "helpers/base.hpp"
 #include "helpers/parser.hpp"
-
-#include "day 01/day01.hpp"
 
 int main(const int argc, char const *argv[]) {
 
@@ -19,9 +19,26 @@ int main(const int argc, char const *argv[]) {
 
     const Arguments program_args = parse_arguments(arguments);
 
-    // TODO
-    std::cout << static_cast<int>(program_args.day) << "\n";
-    day01();
+    const auto day = program_args.day;
+
+    const std::optional<AoCDayStorageType> registered_day =
+        get_registered_day(day);
+
+    if (!registered_day.has_value()) {
+
+      std::cerr << std::format("No such registered Day {:02} !\n", day);
+      std::exit(2);
+    }
+
+    const auto &[description, day_class] = registered_day.value();
+
+    const auto result = day_class->start(description);
+
+    if (!result.has_value()) {
+      std::cerr << std::format("Error in executing day {:02}: {}\n", day,
+                               result.error());
+      std::exit(3);
+    }
 
   } catch (const std::exception &err) {
     std::cerr << "Error: " << err.what() << std::endl;

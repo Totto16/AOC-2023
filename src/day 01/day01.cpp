@@ -1,4 +1,4 @@
-#include "day01.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <filesystem>
@@ -10,6 +10,8 @@
 #include <string>
 #include <vector>
 
+#include "helpers/base.hpp"
+
 std::vector<std::string> splitter(std::string in_pattern,
                                   std::string &content) {
   std::vector<std::string> split_content;
@@ -20,92 +22,80 @@ std::vector<std::string> splitter(std::string in_pattern,
   return split_content;
 }
 
-std::string read(std::filesystem::path name) {
+struct AoCDay01 : AoCDay {
 
-  if (!std::filesystem::exists(name)) {
-    std::cerr << "File " << name << " doesn't exist!\n";
-    std::exit(3);
-  }
+  void part2() {
 
-  std::ifstream myfile(name);
+    std::filesystem::path sample{"src/day 01/sample.txt"};
 
-  if (!myfile.is_open()) { // always check whether the file is open
-    std::cerr << "File " << name << " couldn't be opened!\n";
-    std::exit(4);
-  }
+    std::string input = read(sample);
 
-  std::stringstream strStream;
-  strStream << myfile.rdbuf();
-  return strStream.str();
-}
+    const std::vector<std::string> mappings = {
+        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
 
-void part2() {
+    std::uint64_t result = 0;
 
-  std::filesystem::path sample{"src/day 01/sample.txt"};
+    for (const auto &temp : splitter(R"(\n)", input)) {
 
-  std::string input = read(sample);
+      std::vector<std::uint8_t> numbers{};
 
-  const std::vector<std::string> mappings = {
-      "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
-
-  std::uint64_t result = 0;
-
-  for (const auto &temp : splitter(R"(\n)", input)) {
-
-    std::vector<std::uint8_t> numbers{};
-
-    if (temp.empty() || temp == "\n") {
-      continue;
-    }
-
-    for (std::size_t i = 0; i < temp.size(); ++i) {
-
-      const char &c = temp.at(i);
-
-      if (isdigit(c)) {
-        numbers.push_back(c - '0');
+      if (temp.empty() || temp == "\n") {
+        continue;
       }
 
-      for (std::uint8_t j = 0; j < mappings.size(); ++j) {
-        const auto &mapping = mappings.at(j);
-        if (temp.rfind(mapping, i) == i) {
-          numbers.push_back(j + 1);
+      for (std::size_t i = 0; i < temp.size(); ++i) {
+
+        const char &c = temp.at(i);
+
+        if (isdigit(c)) {
+          numbers.push_back(c - '0');
+        }
+
+        for (std::uint8_t j = 0; j < mappings.size(); ++j) {
+          const auto &mapping = mappings.at(j);
+          if (temp.rfind(mapping, i) == i) {
+            numbers.push_back(j + 1);
+          }
         }
       }
+      assert(numbers.size() >= 1 && "at least one numbers expected");
+      result += numbers.at(0) * 10 + numbers.back();
     }
-    assert(numbers.size() >= 1 && "at least one numbers expected");
-    result += numbers.at(0) * 10 + numbers.back();
+
+    std::cout << result << "\n";
   }
 
-  std::cout << result << "\n";
-}
+  void day01() {
 
-void day01() {
+    std::filesystem::path sample{"src/day 01/sample.txt"};
 
-  std::filesystem::path sample{"src/day 01/sample.txt"};
+    std::string mystring = read(sample);
 
-  std::string mystring = read(sample);
+    std::uint64_t result = 0;
 
-  std::uint64_t result = 0;
+    for (const auto &temp : splitter(R"(\n)", mystring)) {
 
-  for (const auto &temp : splitter(R"(\n)", mystring)) {
+      std::vector<std::uint8_t> numbers{};
 
-    std::vector<std::uint8_t> numbers{};
-
-    if (temp.empty() || temp == "\n") {
-      continue;
-    }
-
-    for (const auto &c : temp) {
-      if (isdigit(c)) {
-        numbers.push_back(c - '0');
+      if (temp.empty() || temp == "\n") {
+        continue;
       }
+
+      for (const auto &c : temp) {
+        if (isdigit(c)) {
+          numbers.push_back(c - '0');
+        }
+      }
+      assert(numbers.size() >= 1 && "at least one numbers expected");
+      result += numbers.at(0) * 10 + numbers.back();
     }
-    assert(numbers.size() >= 1 && "at least one numbers expected");
-    result += numbers.at(0) * 10 + numbers.back();
+
+    std::cout << "part1: " << result << "\n";
+
+    part2();
   }
-
-  std::cout << "part1: " << result << "\n";
-
-  part2();
 }
+
+register_day<AoCDay01>(InputDescription::SameInput("input.txt") >>
+                          InputDescription::Example("example_1.txt", 142) >>
+                          InputDescription::Example("example_2.txt", 281))
