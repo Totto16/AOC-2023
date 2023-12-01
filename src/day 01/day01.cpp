@@ -1,41 +1,49 @@
 
-#include <algorithm>
-#include <cassert>
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <iterator>
-#include <regex>
-#include <sstream>
-#include <string>
-#include <vector>
 
 #include "helpers/base.hpp"
-
-std::vector<std::string> splitter(std::string in_pattern,
-                                  std::string &content) {
-  std::vector<std::string> split_content;
-
-  std::regex pattern(in_pattern);
-  copy(std::sregex_token_iterator(content.begin(), content.end(), pattern, -1),
-       std::sregex_token_iterator(), back_inserter(split_content));
-  return split_content;
-}
-
+#include "helpers/utility.hpp"
 struct AoCDay01 : AoCDay {
 
-  void part2() {
+  AoCDay01() : AoCDay(1) {
+    //
+  }
 
-    std::filesystem::path sample{"src/day 01/sample.txt"};
+  std::uint64_t
+  solvePart1(std::string input,
+             [[maybe_unused]] const bool is_example) const override {
 
-    std::string input = read(sample);
+    std::uint64_t result = 0;
+
+    for (const auto &temp : splitByNewLine(input)) {
+
+      std::vector<std::uint8_t> numbers{};
+
+      if (temp.empty() || temp == "\n") {
+        continue;
+      }
+
+      for (const auto &c : temp) {
+        if (isdigit(c)) {
+          numbers.push_back(c - '0');
+        }
+      }
+      assert(numbers.size() >= 1 && "at least one numbers expected");
+      result += numbers.at(0) * 10 + numbers.back();
+    }
+
+    return result;
+  }
+
+  std::uint64_t
+  solvePart2(std::string input,
+             [[maybe_unused]] const bool is_example) const override {
 
     const std::vector<std::string> mappings = {
         "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
 
     std::uint64_t result = 0;
 
-    for (const auto &temp : splitter(R"(\n)", input)) {
+    for (const auto &temp : splitByNewLine(input)) {
 
       std::vector<std::uint8_t> numbers{};
 
@@ -62,40 +70,10 @@ struct AoCDay01 : AoCDay {
       result += numbers.at(0) * 10 + numbers.back();
     }
 
-    std::cout << result << "\n";
+    return result;
   }
+};
 
-  void day01() {
-
-    std::filesystem::path sample{"src/day 01/sample.txt"};
-
-    std::string mystring = read(sample);
-
-    std::uint64_t result = 0;
-
-    for (const auto &temp : splitter(R"(\n)", mystring)) {
-
-      std::vector<std::uint8_t> numbers{};
-
-      if (temp.empty() || temp == "\n") {
-        continue;
-      }
-
-      for (const auto &c : temp) {
-        if (isdigit(c)) {
-          numbers.push_back(c - '0');
-        }
-      }
-      assert(numbers.size() >= 1 && "at least one numbers expected");
-      result += numbers.at(0) * 10 + numbers.back();
-    }
-
-    std::cout << "part1: " << result << "\n";
-
-    part2();
-  }
-}
-
-register_day<AoCDay01>(InputDescription::SameInput("input.txt") >>
-                          InputDescription::Example("example_1.txt", 142) >>
-                          InputDescription::Example("example_2.txt", 281))
+DayRegister<AoCDay01> day01{Input::SameInput("input.txt") >>
+                            Input::ExampleInput("example_1.txt", 142) >>
+                            Input::ExampleInput("example_2.txt", 281)};
