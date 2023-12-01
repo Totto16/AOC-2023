@@ -5,6 +5,8 @@
 #include "helpers/arguments.hpp"
 #include "helpers/parser.hpp"
 
+#include "day 01/day01.hpp"
+
 int main(const int argc, char const *argv[]) {
 
   try {
@@ -19,6 +21,7 @@ int main(const int argc, char const *argv[]) {
 
     // TODO
     std::cout << static_cast<int>(program_args.day) << "\n";
+    day01();
 
   } catch (const std::exception &err) {
     std::cerr << "Error: " << err.what() << std::endl;

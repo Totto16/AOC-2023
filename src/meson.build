@@ -3,7 +3,7 @@ src_files += files('main.cpp')
 
 subdir('helpers')
 
-foreach day : []
+foreach day : ['01']
     subdir('day ' + day)
 endforeach
 
