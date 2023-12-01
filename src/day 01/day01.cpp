@@ -8,38 +8,8 @@ struct AoCDay01 : AoCDay {
     //
   }
 
-  ResultType
-  solvePart1(std::string input,
-             [[maybe_unused]] const bool is_example) const override {
-
-    ResultType result = 0;
-
-    for (const auto &temp : splitByNewLine(input)) {
-
-      std::vector<std::uint8_t> numbers{};
-
-      if (temp.empty() || temp == "\n") {
-        continue;
-      }
-
-      for (const auto &c : temp) {
-        if (isdigit(c)) {
-          numbers.push_back(c - '0');
-        }
-      }
-      assert(numbers.size() >= 1 && "at least one numbers expected");
-      result += numbers.at(0) * 10 + numbers.back();
-    }
-
-    return result;
-  }
-
-  ResultType
-  solvePart2(std::string input,
-             [[maybe_unused]] const bool is_example) const override {
-
-    const std::vector<std::string> mappings = {
-        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+  ResultType solve(std::string input,
+                   std::vector<std::string> numLiterals) const {
 
     ResultType result = 0;
 
@@ -59,8 +29,8 @@ struct AoCDay01 : AoCDay {
           numbers.push_back(c - '0');
         }
 
-        for (std::uint8_t j = 0; j < mappings.size(); ++j) {
-          const auto &mapping = mappings.at(j);
+        for (std::uint8_t j = 0; j < numLiterals.size(); ++j) {
+          const auto &mapping = numLiterals.at(j);
           if (temp.rfind(mapping, i) == i) {
             numbers.push_back(j + 1);
           }
@@ -71,6 +41,21 @@ struct AoCDay01 : AoCDay {
     }
 
     return result;
+  }
+
+  ResultType solvePart1(std::string input,
+                        [[maybe_unused]] const bool is_example) const override {
+
+    return solve(input, {});
+  }
+
+  ResultType solvePart2(std::string input,
+                        [[maybe_unused]] const bool is_example) const override {
+
+    const std::vector<std::string> mappings = {
+        "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
+
+    return solve(input, mappings);
   }
 };
 
