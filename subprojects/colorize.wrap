@@ -1,0 +1,9 @@
+[wrap-git]
+url = https://github.com/fengwang/colorize.git
+revision = master
+depth = 1
+patch_directory = colorize
+
+
+[provide]
+colorize = colorize_dep

@@ -5,6 +5,7 @@
 
 #include "helpers/arguments.hpp"
 #include "helpers/base.hpp"
+#include "helpers/color.hpp"
 #include "helpers/parser.hpp"
 
 int main(const int argc, char const *argv[]) {
@@ -33,7 +34,10 @@ int main(const int argc, char const *argv[]) {
     }
 
     for (const auto &day : days) {
-      std::cout << std::format("Running day {:02}\n", day);
+      std::cout << std::format(
+          "{}Running day {}{:02}{}\n", Color::color(ColorForeground::Blue),
+          Color::color(ColorForeground::White, Modifier::Bold), day,
+          Color::reset());
 
       const std::optional<AoCDayStorageType> registered_day =
           get_registered_day(day);
@@ -52,6 +56,7 @@ int main(const int argc, char const *argv[]) {
                                  result.error());
         std::exit(3);
       }
+      std::cout << "\n";
     }
   } catch (const std::exception &err) {
     std::cerr << "Error: " << err.what() << std::endl;

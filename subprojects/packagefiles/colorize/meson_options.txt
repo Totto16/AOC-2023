@@ -1,0 +1,7 @@
+
+option(
+    'build_example',
+    type: 'boolean',
+    value: false,
+    description: 'whether or not the example should be built',
+)
