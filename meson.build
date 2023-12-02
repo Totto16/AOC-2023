@@ -21,11 +21,6 @@ deps += dependency(
     'lexy',
 )
 
-deps += dependency(
-    'colorize',
-)
-
-
 src_files = []
 header_files = []
 inc_dirs = []
