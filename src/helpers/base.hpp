@@ -14,6 +14,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "helpers/color.hpp"
+
 using DayType = std::uint8_t;
 using ResultType = std::int64_t;
 
@@ -168,19 +170,29 @@ private:
                                    : this->solvePart2(read_file.value(), true);
 
       if (result == example.result) {
-        std::cout << std::format("Solved Example for part {} successfully\n",
-                                 num);
+        std::cout << std::format(
+            "{}Solved Example for part {}{}{}{} successfully{}\n",
+            ForegroundColor::Green,
+            Color::color(ForegroundColor::Cyan, Modifier::Bold), num,
+            Color::reset(), ForegroundColor::Green, Color::reset());
       } else {
+        const auto brackets = ForegroundColor::Cyan;
+        const auto content = ForegroundColor::Red;
         throw std::runtime_error(std::format(
-            "Error in Example for part {}: expected '{}' but got '{}'!", num,
-            example.result, result));
+            "{}expected {}'{}{}{}'{} but "
+            "got {}'{}{}{}'{}!{}",
+            content, brackets, ForegroundColor::Green, example.result, brackets,
+            content, brackets, ForegroundColor::Blue, result, brackets, content,
+            Color::reset()));
       }
 
       return SuccessResult{};
 
     } catch (std::exception &ex) {
       return std::unexpected(std::format(
-          "Error while running example for part {}: {}", num, ex.what()));
+          "{}In example for part {}{}{}{}: {}", ForegroundColor::Red,
+          Color::color(ForegroundColor::Cyan, Modifier::Bold), num,
+          Color::reset(), ForegroundColor::Red, ex.what()));
     }
   }
 
@@ -193,17 +205,26 @@ private:
       const auto read_file = internals::read(getFilePath(name));
       ~read_file;
 
-      const auto result = num == 1 ? this->solvePart1(read_file.value(), true)
-                                   : this->solvePart2(read_file.value(), true);
+      const auto result = num == 1 ? this->solvePart1(read_file.value(), false)
+                                   : this->solvePart2(read_file.value(), false);
 
-      std::cout << std::format("The solution for part {} is: '{}'\n", num,
-                               result);
+      std::cout << std::format(
+          "{}The solution for part {}{}{}{} is: {}'{}{}{}'{}\n",
+          ForegroundColor::Blue,
+          Color::color(ForegroundColor::Cyan, Modifier::Bold), num,
+          Color::reset(), ForegroundColor::Blue, ForegroundColor::Cyan,
+          ForegroundColor::Green, result, ForegroundColor::Cyan, Color::reset()
+
+      );
 
       return SuccessResult{};
 
     } catch (std::exception &ex) {
-      return std::unexpected(
-          std::format("Error while running part {}: {}", num, ex.what()));
+      return std::unexpected(std::format(
+
+          "{}Error while running part {}{}{}{}: {}{}\n", ForegroundColor::Red,
+          Color::color(ForegroundColor::Cyan, Modifier::Bold), num,
+          Color::reset(), ForegroundColor::Red, ex.what(), Color::reset()));
     }
   }
 
@@ -214,9 +235,11 @@ public:
     //
   }
 
-  virtual ResultType solvePart1(const std::string& input, bool is_example) const = 0;
+  virtual ResultType solvePart1(const std::string &input,
+                                bool is_example) const = 0;
 
-  virtual ResultType solvePart2(const std::string& input, bool is_example) const = 0;
+  virtual ResultType solvePart2(const std::string &input,
+                                bool is_example) const = 0;
 
   std::expected<SuccessResult, std::string>
   start(InputDescription description) {
@@ -263,8 +286,10 @@ struct DayRegister {
     std::shared_ptr<Day> instance = std::make_shared<Day>();
     if (internals::global_init::available_days()->contains(instance->day)) {
       throw std::runtime_error(std::format(
-          "Can't register Day {:02}, since it's already registered!",
-          instance->day));
+          "{}Can't register Day {}{:02}{}{}, since it's already registered!{}",
+          ForegroundColor::Red,
+          Color::color(ForegroundColor::Yellow, Modifier::Bold), instance->day,
+          Color::reset(), ForegroundColor::Red, Color::reset()));
     }
 
     internals::global_init::available_days()->insert_or_assign(

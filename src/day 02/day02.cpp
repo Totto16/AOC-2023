@@ -5,7 +5,7 @@
 
 #include <algorithm>
 
-enum Color { Red = 0, Green = 1, Blue = 2 };
+enum BagColor { Red = 0, Green = 1, Blue = 2 };
 
 struct AoCDay02 : AoCDay {
 
@@ -62,11 +62,11 @@ struct AoCDay02 : AoCDay {
           std::uint8_t index;
 
           if (color == "blue") {
-            index = Color::Blue;
+            index = BagColor::Blue;
           } else if (color == "green") {
-            index = Color::Green;
+            index = BagColor::Green;
           } else if (color == "red") {
-            index = Color::Red;
+            index = BagColor::Red;
           } else {
             throw std::runtime_error(
                 std::format("Unrecognized color {}", color));
@@ -138,11 +138,11 @@ struct AoCDay02 : AoCDay {
           std::uint8_t index;
 
           if (color == "blue") {
-            index = Color::Blue;
+            index = BagColor::Blue;
           } else if (color == "green") {
-            index = Color::Green;
+            index = BagColor::Green;
           } else if (color == "red") {
-            index = Color::Red;
+            index = BagColor::Red;
           } else {
             throw std::runtime_error(
                 std::format("Unrecognized color {}", color));

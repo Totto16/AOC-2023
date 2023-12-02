@@ -58,14 +58,17 @@ int main(const int argc, char const *argv[]) {
       const auto result = day_class->start(description);
 
       if (!result.has_value()) {
-        std::cerr << std::format("Error in executing day {:02}: {}\n", day,
-                                 result.error());
+        std::cerr << std::format(
+            "{}Error in executing day {}{:02}{}{}: {}{}\n", ForegroundColor::Red,
+            Color::color(ForegroundColor::Yellow, Modifier::Bold), day,
+            Color::reset(), ForegroundColor::Red, result.error(),
+            Color::reset());
         std::exit(3);
       }
       std::cout << "\n";
     }
   } catch (const std::exception &err) {
-    std::cerr << "Error: " << err.what() << std::endl;
+    std::cerr << "Error thrown: " << err.what() << "\n";
     std::exit(1);
   }
 }
