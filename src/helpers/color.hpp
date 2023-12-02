@@ -121,3 +121,15 @@ struct Color {
     return color(ColorForeground::Default, ColorBackground::Default, modifier);
   }
 };
+
+template <typename CharT>
+struct std::formatter<ColorForeground, CharT>
+    : std::formatter<std::string, CharT> {
+
+  constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
+
+  auto format(const ColorForeground &value, std::format_context &ctx) const {
+
+    return std::format_to(ctx.out(), "{}", Color::color(value));
+  }
+};

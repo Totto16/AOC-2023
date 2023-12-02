@@ -28,6 +28,9 @@ int main(const int argc, char const *argv[]) {
       for (const auto &available_day : get_available_days()) {
         days.push_back(available_day);
       }
+      std::cout << std::format("{}Running all available Days!{}\n\n",
+                               Color::color(ColorForeground::Green),
+                               Color::reset());
 
     } else {
       days.push_back(parsed_day);
@@ -35,15 +38,18 @@ int main(const int argc, char const *argv[]) {
 
     for (const auto &day : days) {
       std::cout << std::format(
-          "{}Running day {}{:02}{}\n", Color::color(ColorForeground::Blue),
-          Color::color(ColorForeground::White, Modifier::Bold), day,
+          "{}Running day {}{:02}{}\n", ColorForeground::Cyan,
+          Color::color(ColorForeground::Blue, Modifier::Bold), day,
           Color::reset());
 
       const std::optional<AoCDayStorageType> registered_day =
           get_registered_day(day);
 
       if (!registered_day.has_value()) {
-        std::cerr << std::format("No such registered Day {:02}!\n", day);
+        std::cerr << std::format(
+            "{}No such registered Day {}{:02}{}\n", ColorForeground::Red,
+            Color::color(ColorForeground::Yellow, Modifier::Bold), day,
+            Color::reset());
         std::exit(2);
       }
 
