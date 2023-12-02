@@ -9,7 +9,7 @@ struct AoCDayXX : AoCDay {
     //
   }
 
-  ResultType solvePart1(std::string input,
+  ResultType solvePart1(const std::string &input,
                         [[maybe_unused]] const bool is_example) const override {
 
     ResultType result = 0;
@@ -17,7 +17,7 @@ struct AoCDayXX : AoCDay {
     return result;
   }
 
-  ResultType solvePart2(std::string input,
+  ResultType solvePart2(const std::string &input,
                         [[maybe_unused]] const bool is_example) const override {
 
     ResultType result = 0;

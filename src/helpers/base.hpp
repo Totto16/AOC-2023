@@ -196,7 +196,7 @@ private:
       const auto result = num == 1 ? this->solvePart1(read_file.value(), true)
                                    : this->solvePart2(read_file.value(), true);
 
-      std::cout << std::format("The solution for part {} is : '{}'\n", num,
+      std::cout << std::format("The solution for part {} is: '{}'\n", num,
                                result);
 
       return SuccessResult{};
@@ -214,9 +214,9 @@ public:
     //
   }
 
-  virtual ResultType solvePart1(std::string input, bool is_example) const = 0;
+  virtual ResultType solvePart1(const std::string& input, bool is_example) const = 0;
 
-  virtual ResultType solvePart2(std::string input, bool is_example) const = 0;
+  virtual ResultType solvePart2(const std::string& input, bool is_example) const = 0;
 
   std::expected<SuccessResult, std::string>
   start(InputDescription description) {
