@@ -7,7 +7,7 @@
 #include <string>
 #include <utility>
 
-enum class ColorForeground : std::uint8_t {
+enum class ForegroundColor : std::uint8_t {
   Default = 39,
   Black = 30,
   Red = 31,
@@ -27,7 +27,7 @@ enum class ColorForeground : std::uint8_t {
   White = 97
 };
 
-enum class ColorBackground : std::uint8_t {
+enum class BackgroundColor : std::uint8_t {
   Default = 49,
   Black = 40,
   Red = 41,
@@ -80,15 +80,15 @@ struct Color {
 
   static constexpr std::string reset() { return reset(ResetModifier::All); }
 
-  static constexpr std::string color(ColorForeground foreground) {
+  static constexpr std::string color(ForegroundColor foreground) {
 
     const auto fg = std::to_string(std::to_underlying(foreground));
 
     return std::format("{}[{}m", control, fg);
   }
 
-  static constexpr std::string color(ColorForeground foreground,
-                                     ColorBackground background) {
+  static constexpr std::string color(ForegroundColor foreground,
+                                     BackgroundColor background) {
 
     const auto fg = std::to_string(std::to_underlying(foreground));
 
@@ -97,8 +97,8 @@ struct Color {
     return std::format("{}[{};{}m", control, bg, fg);
   }
 
-  static constexpr std::string color(ColorForeground foreground,
-                                     ColorBackground background,
+  static constexpr std::string color(ForegroundColor foreground,
+                                     BackgroundColor background,
                                      Modifier modifier) {
 
     const auto fg = std::to_string(std::to_underlying(foreground));
@@ -110,25 +110,25 @@ struct Color {
     return std::format("{}[{};{};{}m", control, md, bg, fg);
   }
 
-  static constexpr std::string color(ColorForeground foreground,
+  static constexpr std::string color(ForegroundColor foreground,
                                      Modifier modifier) {
 
-    return color(foreground, ColorBackground::Default, modifier);
+    return color(foreground, BackgroundColor::Default, modifier);
   }
 
   static constexpr std::string color(Modifier modifier) {
 
-    return color(ColorForeground::Default, ColorBackground::Default, modifier);
+    return color(ForegroundColor::Default, BackgroundColor::Default, modifier);
   }
 };
 
 template <typename CharT>
-struct std::formatter<ColorForeground, CharT>
+struct std::formatter<ForegroundColor, CharT>
     : std::formatter<std::string, CharT> {
 
   constexpr auto parse(std::format_parse_context &ctx) { return ctx.begin(); }
 
-  auto format(const ColorForeground &value, std::format_context &ctx) const {
+  auto format(const ForegroundColor &value, std::format_context &ctx) const {
 
     return std::format_to(ctx.out(), "{}", Color::color(value));
   }
