@@ -36,6 +36,8 @@ int main(const int argc, char const *argv[]) {
       days.push_back(parsed_day);
     }
 
+    std::sort(days.begin(), days.end());
+
     for (const auto &day : days) {
       std::cout << std::format(
           "{}Running day {}{:02}{}\n", ForegroundColor::Cyan,
@@ -59,7 +61,8 @@ int main(const int argc, char const *argv[]) {
 
       if (!result.has_value()) {
         std::cerr << std::format(
-            "{}Error in executing day {}{:02}{}{}: {}{}\n", ForegroundColor::Red,
+            "{}Error in executing day {}{:02}{}{}: {}{}\n",
+            ForegroundColor::Red,
             Color::color(ForegroundColor::Yellow, Modifier::Bold), day,
             Color::reset(), ForegroundColor::Red, result.error(),
             Color::reset());
