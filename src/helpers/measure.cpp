@@ -1,12 +1,14 @@
-#include <chrono>
-#include <functional>
-#include <iostream>
-#include <string>
+#include "measure.hpp"
 
 using namespace std::literals::chrono_literals;
 
-    std::ostream &
-    operator<<(std::ostream &os, const std::chrono::nanoseconds &dur) {
+std::string internals::to_string(const std::chrono::nanoseconds &dur,
+                                 const PrintOptions &options) {
+
+  // TODO use options
+  (void)options;
+
+  std::stringstream ss;
 
   auto hours = duration_cast<std::chrono::hours>(dur);
 
@@ -24,32 +26,32 @@ using namespace std::literals::chrono_literals;
 
   if (printed_earlier || hours >= 1h) {
     printed_earlier = true;
-    os << hours.count() << ' ' << (1h != hours ? "hours" : "hour") << ' ';
+    ss << hours.count() << ' ' << (1h != hours ? "hours" : "hour") << ' ';
   }
   if (printed_earlier || mins >= 1min) {
     printed_earlier = true;
-    os << mins.count() << ' ' << (1min != mins ? "minutes" : "minute") << ' ';
+    ss << mins.count() << ' ' << (1min != mins ? "minutes" : "minute") << ' ';
   }
   if (printed_earlier || secs >= 1s) {
     printed_earlier = true;
-    os << secs.count() << ' ' << (1s != secs ? "seconds" : "second") << ' ';
+    ss << secs.count() << ' ' << (1s != secs ? "seconds" : "second") << ' ';
   }
   if (printed_earlier || msecs >= 1ms) {
     printed_earlier = true;
-    os << msecs.count() << ' '
+    ss << msecs.count() << ' '
        << (1ms != msecs ? "milliseconds" : "millisecond") << ' ';
   }
 
   if (printed_earlier || usecs >= 1us) {
     printed_earlier = true;
-    os << usecs.count() << ' '
+    ss << usecs.count() << ' '
        << (1us != usecs ? "microseconds" : "microsecond") << ' ';
   }
 
   if (printed_earlier || nsecs >= 1ns) {
     printed_earlier = true;
-    os << nsecs.count() << ' ' << (1ns != nsecs ? "nanoseconds" : "nanosecond");
+    ss << nsecs.count() << ' ' << (1ns != nsecs ? "nanoseconds" : "nanosecond");
   }
 
-  return os;
+  return ss.str();
 }

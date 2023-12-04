@@ -215,7 +215,13 @@ private:
 
       const auto result =
           measureTime
-              ? measure(std::format("Day {:02} part {}", day, num), execute)
+              ? measure(std::format(
+                            "{}Day {}{:02}{}{} part {}{}{}",
+                            ForegroundColor::Green,
+                            Color::color(ForegroundColor::Cyan, Modifier::Bold),
+                            day, Color::reset(), ForegroundColor::Green,
+                            ForegroundColor::Cyan, num, Color::reset()),
+                        execute)
               : execute();
 
       std::cout << std::format(
