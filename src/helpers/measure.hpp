@@ -18,6 +18,27 @@ struct PrintOptions {
 
 using namespace std::literals::chrono_literals;
 
+struct Duration {
+  std::chrono::nanoseconds duration;
+  std::chrono::nanoseconds unit;
+  std::string singular;
+  std::string plural;
+  std::int64_t count;
+
+  template <typename INT, typename T>
+  Duration(const std::chrono::duration<INT, T> duration,
+           const std::chrono::duration<INT, T> unit, const std::string singular,
+           const std::string plural)
+      : duration{std::chrono::duration_cast<std::chrono::nanoseconds>(
+            duration)},
+        unit{std::chrono::duration_cast<std::chrono::nanoseconds>(unit)},
+        singular{singular}, plural{plural}, count{duration.count()} {
+    //
+  }
+};
+
+const constexpr std::uint8_t durationsAmount = 6;
+
 std::string to_string(const std::chrono::nanoseconds &dur,
                       const PrintOptions &options);
 
