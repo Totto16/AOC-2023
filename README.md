@@ -14,6 +14,21 @@ meson setup build
 meson compile -C build
 ./build/aoc 01 -- or 02 etc.
 ```
+## Features
+
+- base class, that gets the input from file and handles other stuff
+- easy input and / or Example handling
+- global register map for easy registering of days, than you can execute all regsitered days
+- cli options for measuring time, executing certain days
+- colorful output
+- exact measurements down to nanoseconds via std::chrono
+
+## Preview
+
+![Preview of the cli](images/preview.png)
+
+
+
 
 
 <!--- advent_readme_stars table --->
