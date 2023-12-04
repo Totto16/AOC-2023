@@ -10,6 +10,8 @@
 #include <utility>
 #include <variant>
 
+namespace Day03 {
+
 std::optional<std::uint64_t> get_number(const std::string &inp) {
   char *end = nullptr;
   const char *c_str = inp.c_str();
@@ -34,6 +36,7 @@ std::optional<std::uint64_t> get_number(const std::string &inp) {
 
 enum class CharClass { Period, Symbol, Gear };
 
+} // namespace Day03
 // helper type for the visitor
 template <class... Ts> struct Overloaded : Ts... {
   using Ts::operator()...;
@@ -45,7 +48,8 @@ struct AoCDay03 : AoCDay {
     //
   }
 
-  using VectorContent = std::variant<CharClass, std::shared_ptr<std::uint64_t>>;
+  using VectorContent =
+      std::variant<Day03::CharClass, std::shared_ptr<std::uint64_t>>;
 
   ResultType solvePart1(const std::string &input,
                         [[maybe_unused]] const bool is_example) const override {
@@ -60,7 +64,7 @@ struct AoCDay03 : AoCDay {
       std::vector<VectorContent> inner_vec{};
 
       while (pos < line.size()) {
-        auto num = get_number(line.substr(pos));
+        auto num = Day03::get_number(line.substr(pos));
         if (num.has_value()) {
 
           auto value = std::make_shared<std::uint64_t>(num.value());
@@ -74,9 +78,9 @@ struct AoCDay03 : AoCDay {
         } else {
           const char given = line.at(pos);
           if (given == '.') {
-            inner_vec.emplace_back(CharClass::Period);
+            inner_vec.emplace_back(Day03::CharClass::Period);
           } else {
-            inner_vec.emplace_back(CharClass::Symbol);
+            inner_vec.emplace_back(Day03::CharClass::Symbol);
           }
           ++pos;
         }
@@ -86,17 +90,19 @@ struct AoCDay03 : AoCDay {
     }
 
     auto is_symbol = [](const VectorContent &cont) {
-      return std::visit(
-          Overloaded{
-              [](const CharClass &c) { return c == CharClass::Symbol; },
-              [](const std::shared_ptr<std::uint64_t> &) { return false; }},
-          cont);
+      return std::visit(Overloaded{[](const Day03::CharClass &c) {
+                                     return c == Day03::CharClass::Symbol;
+                                   },
+                                   [](const std::shared_ptr<std::uint64_t> &) {
+                                     return false;
+                                   }},
+                        cont);
     };
 
     auto get_number_at = [&rows](const std::size_t i, const std::size_t j)
         -> std::optional<std::shared_ptr<std::uint64_t>> {
       return std::visit(
-          Overloaded{[](const CharClass &)
+          Overloaded{[](const Day03::CharClass &)
                          -> std::optional<std::shared_ptr<std::uint64_t>> {
                        return std::nullopt;
                      },
@@ -193,7 +199,7 @@ struct AoCDay03 : AoCDay {
       std::vector<VectorContent> inner_vec{};
 
       while (pos < line.size()) {
-        auto num = get_number(line.substr(pos));
+        auto num = Day03::get_number(line.substr(pos));
         if (num.has_value()) {
 
           auto value = std::make_shared<std::uint64_t>(num.value());
@@ -207,11 +213,11 @@ struct AoCDay03 : AoCDay {
         } else {
           const char given = line.at(pos);
           if (given == '.') {
-            inner_vec.emplace_back(CharClass::Period);
+            inner_vec.emplace_back(Day03::CharClass::Period);
           } else if (given == '*') {
-            inner_vec.emplace_back(CharClass::Gear);
+            inner_vec.emplace_back(Day03::CharClass::Gear);
           } else {
-            inner_vec.emplace_back(CharClass::Symbol);
+            inner_vec.emplace_back(Day03::CharClass::Symbol);
           }
           ++pos;
         }
@@ -221,17 +227,19 @@ struct AoCDay03 : AoCDay {
     }
 
     auto is_gear = [](const VectorContent &cont) {
-      return std::visit(
-          Overloaded{
-              [](const CharClass &c) { return c == CharClass::Gear; },
-              [](const std::shared_ptr<std::uint64_t> &) { return false; }},
-          cont);
+      return std::visit(Overloaded{[](const Day03::CharClass &c) {
+                                     return c == Day03::CharClass::Gear;
+                                   },
+                                   [](const std::shared_ptr<std::uint64_t> &) {
+                                     return false;
+                                   }},
+                        cont);
     };
 
     auto get_number_at = [&rows](const std::size_t i, const std::size_t j)
         -> std::optional<std::shared_ptr<std::uint64_t>> {
       return std::visit(
-          Overloaded{[](const CharClass &)
+          Overloaded{[](const Day03::CharClass &)
                          -> std::optional<std::shared_ptr<std::uint64_t>> {
                        return std::nullopt;
                      },
