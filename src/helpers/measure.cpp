@@ -7,7 +7,7 @@ using namespace std::literals::chrono_literals;
 std::string internals::to_string(const std::chrono::nanoseconds &dur,
                                  const PrintOptions &options) {
 
-  std::stringstream ss;
+  std::string result{};
 
   std::array<Duration, internals::durationsAmount> durations = {
       Duration{std::chrono::duration_cast<std::chrono::hours>(dur), 1h, "hour",
@@ -29,15 +29,29 @@ std::string internals::to_string(const std::chrono::nanoseconds &dur,
       options.useColor ? Color::color(ForegroundColor::Blue, Modifier::Bold)
                        : "";
 
-  bool printed_earlier = false;
-  for (const auto &[duration, unit, singular, plural, count] : durations) {
+  const auto normalColor =
+      options.useColor ? Color::color(ForegroundColor::Green) : "";
+  const auto reset = options.useColor ? Color::reset() : "";
 
-    if (printed_earlier || duration >= unit) {
+  bool printed_earlier = options.leading;
+  std::uint8_t max =
+      options.leading ? durationsAmount : options.maximum_precision;
+
+  for (std::uint8_t i = 0; i < durations.size(); ++i) {
+    const auto &[duration, unit, singular, plural, count] = durations.at(i);
+
+    const auto trailingWhiteSpace = i + 1u != durations.size() ? " " : "";
+    const bool shouldPrint = (printed_earlier || duration >= unit) && max > 0;
+
+    if (shouldPrint) {
+      --max;
       printed_earlier = true;
-      ss << timeColor << count << Color::reset() << ' '
-         << (unit == duration ? singular : plural) << ' ';
+      result += std::format("{}{}{}{} {}{}{}", timeColor, count, reset,
+                            normalColor, (unit == duration ? singular : plural),
+                            trailingWhiteSpace, reset);
     }
   }
 
-  return ss.str();
+  return result;
+  ;
 }
