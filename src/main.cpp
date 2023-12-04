@@ -38,9 +38,10 @@ int main(const int argc, char const *argv[]) {
 
     std::sort(days.begin(), days.end());
 
-    for (const auto &day : days) {
+    for (std::size_t i = 0; i < days.size(); ++i) {
+      const auto &day = days.at(i);
       std::cout << std::format(
-          "{}Running day {}{:02}{}\n", ForegroundColor::Cyan,
+          "{}Running Day {}{:02}{}\n", ForegroundColor::Cyan,
           Color::color(ForegroundColor::Blue, Modifier::Bold), day,
           Color::reset());
 
@@ -69,7 +70,10 @@ int main(const int argc, char const *argv[]) {
             Color::reset());
         std::exit(3);
       }
-      std::cout << "\n";
+
+      if (i + 1u != days.size()) {
+        std::cout << "\n";
+      }
     }
   } catch (const std::exception &err) {
     std::cerr << "Error thrown: " << err.what() << "\n";

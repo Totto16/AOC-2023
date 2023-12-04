@@ -8,10 +8,10 @@ const Arguments parse_arguments(const std::vector<std::string> &arguments) {
                                    argparse::default_arguments::all};
 
   program.add_argument("day")
-      .help("The day to execute (0-25 -> 0 means all)")
+      .help("The Day to execute (0-25 -> 0 means all)")
       .required()
       .scan<'u', DayType>();
-  program.add_argument("-t", "--time")
+  program.add_argument("-m", "--measure")
       .help("Measure the time of solutions")
       .default_value(false)
       .implicit_value(true);
@@ -20,7 +20,7 @@ const Arguments parse_arguments(const std::vector<std::string> &arguments) {
     program.parse_args(arguments);
 
     const DayType day = program.get<DayType>("day");
-    const bool measureTime = program.get<bool>("--time");
+    const bool measureTime = program.get<bool>("--measure");
     return Arguments{day, measureTime};
 
   } catch (const std::exception &err) {
