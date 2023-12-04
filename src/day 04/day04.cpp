@@ -50,10 +50,12 @@ struct AoCDay04 : AoCDay {
     auto parse_numbers = [](const std::string &content) {
       std::vector<ResultType> vec{};
       for (const auto &num : splitByRegex(content, R"( )")) {
-        const auto num_value = Day04::get_number(num);
-        if (num_value.has_value()) {
-          vec.push_back(num_value.value());
+        if (num.empty()) {
+          continue;
         }
+        const auto num_value = Day04::get_number(num);
+        assert(num_value.has_value() && "This has to be a number");
+        vec.push_back(num_value.value());
       }
 
       return vec;
@@ -105,4 +107,4 @@ struct AoCDay04 : AoCDay {
 };
 
 DayRegister<AoCDay04> day04{Input::SameInput("input.txt") >>
-                            Input::SameExample("example.txt", 13, -1)};
+                            Input::SameExample("example.txt", 13, 30)};
