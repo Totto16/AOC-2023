@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "helpers/color.hpp"
+#include "helpers/measure.hpp"
 
 using DayType = std::uint8_t;
 using ResultType = std::int64_t;
@@ -196,8 +197,9 @@ private:
     }
   }
 
-  std::expected<SuccessResult, std::string> executePart(internals::Part part,
-                                                        std::string name) {
+  std::expected<SuccessResult, std::string>
+  executePart(internals::Part part, const std::string &name,
+              const bool measureTime) {
     const uint8_t num = part == internals::Part::Part1 ? 1 : 2;
 
     try {
@@ -205,8 +207,16 @@ private:
       const auto read_file = internals::read(getFilePath(name));
       ~read_file;
 
-      const auto result = num == 1 ? this->solvePart1(read_file.value(), false)
-                                   : this->solvePart2(read_file.value(), false);
+      const std::function<ResultType()> execute = [this, &read_file, &num]() {
+        return num == 1 ? this->solvePart1(read_file.value(), false)
+
+                        : this->solvePart2(read_file.value(), false);
+      };
+
+      const auto result =
+          measureTime
+              ? measure(std::format("Day {:02} part {}", day, num), execute)
+              : execute();
 
       std::cout << std::format(
           "{}The solution for part {}{}{}{} is: {}'{}{}{}'{}\n",
@@ -241,8 +251,8 @@ public:
   virtual ResultType solvePart2(const std::string &input,
                                 bool is_example) const = 0;
 
-  std::expected<SuccessResult, std::string>
-  start(InputDescription description) {
+  std::expected<SuccessResult, std::string> start(InputDescription description,
+                                                  const bool measureTime) {
 
     try {
 
@@ -250,13 +260,15 @@ public:
         ~executeExample(internals::Part::Part1, description.example_1.value());
       }
 
-      ~executePart(internals::Part::Part1, description.input_1_name);
+      ~executePart(internals::Part::Part1, description.input_1_name,
+                   measureTime);
 
       if (description.example_2.has_value()) {
         ~executeExample(internals::Part::Part2, description.example_2.value());
       }
 
-      ~executePart(internals::Part::Part2, description.input_2_name);
+      ~executePart(internals::Part::Part2, description.input_2_name,
+                   measureTime);
 
       return SuccessResult{};
     } catch (std::exception &ex) {

@@ -14,6 +14,7 @@
 
 struct Arguments {
   DayType day;
+  bool measureTime;
 };
 
 [[nodiscard]] const Arguments

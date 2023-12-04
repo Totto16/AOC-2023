@@ -57,7 +57,8 @@ int main(const int argc, char const *argv[]) {
 
       const auto &[description, day_class] = registered_day.value();
 
-      const auto result = day_class->start(description);
+      const auto result =
+          day_class->start(description, program_args.measureTime);
 
       if (!result.has_value()) {
         std::cerr << std::format(
