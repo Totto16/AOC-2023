@@ -176,16 +176,6 @@ struct AoCDay05 : AoCDay {
 
     assert(seeds_raw.size() % 2 == 0 && "Seed amount has to be even!");
 
-    std::vector<ResultType> seeds{};
-
-    for (std::size_t i = 0; i < seeds_raw.size() / 2; ++i) {
-      const auto start = seeds_raw.at(i * 2);
-      const auto length = seeds_raw.at(i * 2 + 1);
-      for (ResultType value = start; value < start + length; ++value) {
-        seeds.push_back(value);
-      }
-    }
-
     // delete the first two lines!
     lines.erase(lines.begin());
     lines.erase(lines.begin());
@@ -222,16 +212,33 @@ struct AoCDay05 : AoCDay {
           Day05::MapEntry{numbers.at(0), numbers.at(1), numbers.at(2)});
     }
 
-    for (const auto &map : maps) {
-      for (std::size_t i = 0; i < seeds.size(); ++i) {
+    ResultType result = std::numeric_limits<ResultType>::max();
 
-        seeds.at(i) = map.map(seeds.at(i));
+    for (std::size_t i = 0; i < seeds_raw.size() / 2; ++i) {
+      std::cout << "i: " << i <<  " / "<< (seeds_raw.size() / 2) << "\n";
+      const auto start = seeds_raw.at(i * 2);
+      const auto length = seeds_raw.at(i * 2 + 1);
+
+      std::vector<ResultType> seeds{};
+
+      for (ResultType value = start; value < start + length; ++value) {
+        seeds.push_back(value);
       }
+
+      for (const auto &map : maps) {
+        for (std::size_t i = 0; i < seeds.size(); ++i) {
+
+          seeds.at(i) = map.map(seeds.at(i));
+        }
+      }
+
+      std::sort(seeds.begin(), seeds.end());
+
+      result = std::min(seeds.at(0), result);
+      ;
     }
 
-    std::sort(seeds.begin(), seeds.end());
-
-    return seeds.at(0);
+    return result;
   }
 };
 
