@@ -155,14 +155,85 @@ struct AoCDay05 : AoCDay {
 
   ResultType solvePart2(const std::string &input,
                         [[maybe_unused]] const bool is_example) const override {
+    auto lines = splitByNewLine(input);
 
-    ResultType result = 0;
+    std::vector<ResultType> seeds_raw = {};
 
-    result += input.size();
+    const auto seed_list = splitByRegex(lines.at(0), R"(:)");
 
-    return result;
+    assert(seed_list.size() == 2 && "seed list has to be the correct length");
+
+    for (const auto &seed : splitByRegex(seed_list.at(1), R"( )")) {
+
+      if (seed.empty()) {
+        continue;
+      }
+
+      const auto num = Day05::get_number(seed);
+      assert(num.has_value() && "seed has to be a number");
+      seeds_raw.push_back(num.value());
+    }
+
+    assert(seeds_raw.size() % 2 == 0 && "Seed amount has to be even!");
+
+    std::vector<ResultType> seeds{};
+
+    for (std::size_t i = 0; i < seeds_raw.size() / 2; ++i) {
+      const auto start = seeds_raw.at(i * 2);
+      const auto length = seeds_raw.at(i * 2 + 1);
+      for (ResultType value = start; value < start + length; ++value) {
+        seeds.push_back(value);
+      }
+    }
+
+    // delete the first two lines!
+    lines.erase(lines.begin());
+    lines.erase(lines.begin());
+
+    std::vector<Day05::Map> maps{};
+    maps.push_back(Day05::Map{});
+
+    std::size_t index = 0;
+
+    for (const auto &line : lines) {
+
+      if (line.empty()) {
+        maps.push_back(Day05::Map{});
+        ++index;
+        continue;
+      }
+
+      if (line.back() == ':') {
+        continue;
+      }
+
+      std::vector<ResultType> numbers = {};
+
+      for (const auto &number_str : splitByRegex(line, R"( )")) {
+
+        const auto num = Day05::get_number(number_str);
+        assert(num.has_value() && "entry has to be a number");
+        numbers.push_back(num.value());
+      }
+
+      assert(numbers.size() == 3 && "A map has to have 3 entries");
+
+      maps.at(index).add(
+          Day05::MapEntry{numbers.at(0), numbers.at(1), numbers.at(2)});
+    }
+
+    for (const auto &map : maps) {
+      for (std::size_t i = 0; i < seeds.size(); ++i) {
+
+        seeds.at(i) = map.map(seeds.at(i));
+      }
+    }
+
+    std::sort(seeds.begin(), seeds.end());
+
+    return seeds.at(0);
   }
 };
 
 DayRegister<AoCDay05> day05{Input::SameInput("input.txt") >>
-                            Input::SameExample("example.txt", 35, -1)};
+                            Input::SameExample("example.txt", 35, 46)};
