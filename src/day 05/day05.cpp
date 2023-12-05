@@ -47,6 +47,38 @@ enum class RangeState {
   LeftOverlap
 };
 
+RangeState ranges_overlap(const Range &source, const Range &dest) {
+
+  const auto &[start, end] = dest;
+  const auto &[own_start, own_end] = source;
+
+  if (own_start > end) {
+    return RangeState::NoOverlap;
+  }
+
+  if (own_end < start) {
+    return RangeState::NoOverlap;
+  }
+
+  if (start >= own_start && end <= own_end) {
+    return RangeState::FullyInclusive;
+  }
+
+  if (start < own_start && end > own_end) {
+    return RangeState::ThreeWayOverlap;
+  }
+
+  if (start >= own_start && end > own_end) {
+    return RangeState::RightOverlap;
+  }
+
+  if (start < own_start && end <= own_end) {
+    return RangeState::LeftOverlap;
+  }
+
+  assert(false && "UNREACHABLE or didn't handel range case!");
+}
+
 struct MapEntry {
 
 public:
@@ -68,35 +100,7 @@ public:
   }
 
   RangeState range_state(const Range &range) const {
-
-    const auto &[start, end] = range;
-    const auto &[own_start, own_end] = source;
-
-    if (own_start > end) {
-      return RangeState::NoOverlap;
-    }
-
-    if (own_end < start) {
-      return RangeState::NoOverlap;
-    }
-
-    if (start >= own_start && end <= own_end) {
-      return RangeState::FullyInclusive;
-    }
-
-    if (start < own_start && end > own_end) {
-      return RangeState::ThreeWayOverlap;
-    }
-
-    if (start >= own_start && end > own_end) {
-      return RangeState::RightOverlap;
-    }
-
-    if (start < own_start && end <= own_end) {
-      return RangeState::LeftOverlap;
-    }
-
-    assert(false && "UNREACHABLE or didn't handel range case!");
+    return ranges_overlap(source, range);
   }
 
   Range map_fully(const Range &input) const {
@@ -200,6 +204,12 @@ struct Map {
     return result;
   }
 };
+
+std::vector<Range> merge_ranges(const std::vector<Range> &input) {
+
+  // not done: since it doesn't improve the performance by a lot
+  return input;
+}
 
 } // namespace Day05
 
@@ -359,8 +369,8 @@ struct AoCDay05 : AoCDay {
       }
 
       seeds.clear();
-      // TODO: it would be possible to merge ranges here
-      for (const auto &elem : temp) {
+      const auto merged_ranges = Day05::merge_ranges(temp);
+      for (const auto &elem : merged_ranges) {
         seeds.push_back(elem);
       }
     }
