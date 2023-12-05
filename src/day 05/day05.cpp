@@ -37,11 +37,21 @@ std::optional<std::uint64_t> get_number(const std::string &inp) {
   return result;
 }
 
+using Range = std::pair<ResultType, ResultType>;
+
+enum class RangeState {
+  FullyInclusive,
+  NoOverlap,
+  ThreeWayOverlap,
+  RightOverlap,
+  LeftOverlap
+};
+
 struct MapEntry {
 
 public:
   ResultType dest_start;
-  std::pair<ResultType, ResultType> source;
+  Range source;
 
   MapEntry(ResultType dest_start, ResultType source_start, ResultType length)
       : dest_start{dest_start},
@@ -55,6 +65,71 @@ public:
   ResultType map(const ResultType input) const {
     assert(in_source_range(input) && "only mappable, if in source range");
     return input - source.first + dest_start;
+  }
+
+  RangeState range_state(const Range &range) const {
+
+    const auto &[start, end] = range;
+    const auto &[own_start, own_end] = source;
+
+    if (own_start > end) {
+      return RangeState::NoOverlap;
+    }
+
+    if (own_end < start) {
+      return RangeState::NoOverlap;
+    }
+
+    if (start >= own_start && end <= own_end) {
+      return RangeState::FullyInclusive;
+    }
+
+    if (start < own_start && end > own_end) {
+      return RangeState::ThreeWayOverlap;
+    }
+
+    if (start >= own_start && end > own_end) {
+      return RangeState::RightOverlap;
+    }
+
+    if (start < own_start && end <= own_end) {
+      return RangeState::LeftOverlap;
+    }
+
+    assert(false && "UNREACHABLE or didn't handel range case!");
+  }
+
+  Range map_fully(const Range &input) const {
+
+    assert(range_state(input) == RangeState::FullyInclusive &&
+           "only fully mappable, if 'FullyInclusive'");
+
+    const auto &[start, end] = input;
+    const auto shift_amount = dest_start - source.first;
+    return {start + shift_amount, end + shift_amount};
+  }
+
+  std::pair<Range, std::vector<Range>> map_partly(const Range &input) const {
+
+    const auto &[start, end] = input;
+    const auto &[own_start, own_end] = source;
+    const auto shift_amount = dest_start - source.first;
+    switch (range_state(input)) {
+    case RangeState::LeftOverlap:
+      return {Range{own_start + shift_amount, end + shift_amount},
+              {Range{start, own_start - 1}}};
+
+    case RangeState::RightOverlap:
+      return {Range{start + shift_amount, own_end + shift_amount},
+              {Range{own_end + 1, end}}};
+
+    case RangeState::ThreeWayOverlap:
+      return {Range{own_start + shift_amount, own_end + shift_amount},
+              {Range{start, own_start - 1}, Range{own_end + 1, end}}};
+
+    default:
+      assert(false && "only partly mappable, if overlapping");
+    }
   }
 };
 
@@ -72,6 +147,57 @@ struct Map {
     }
 
     return input;
+  }
+
+  std::vector<Range> map_range(const Range &input) const {
+
+    std::vector<Range> result{};
+
+    std::vector<Range> remaining_ranges{input};
+
+    for (const auto &entry : entries) {
+
+      std::vector<Range> unmapped_temp{};
+
+      for (const auto &range : remaining_ranges) {
+
+        switch (entry.range_state(range)) {
+        case RangeState::FullyInclusive:
+          result.push_back(entry.map_fully(range));
+          break;
+        case RangeState::NoOverlap:
+          unmapped_temp.push_back(range);
+          break;
+
+        case RangeState::LeftOverlap:
+        case RangeState::RightOverlap:
+        case RangeState::ThreeWayOverlap: {
+          const auto res = entry.map_partly(range);
+          result.push_back(res.first);
+          for (const auto &elem : res.second) {
+            unmapped_temp.push_back(elem);
+          }
+
+          break;
+        }
+        default:
+          assert(false && "UNREACHBALE");
+        }
+      }
+
+      remaining_ranges.clear();
+      for (const auto &elem : unmapped_temp) {
+        remaining_ranges.push_back(elem);
+      }
+    }
+
+    // add remaining ranges to the result, here we have are mapped and unmapped
+    // ranges
+    for (const auto &remaining_range : remaining_ranges) {
+      result.push_back(remaining_range);
+    }
+
+    return result;
   }
 };
 
@@ -176,6 +302,14 @@ struct AoCDay05 : AoCDay {
 
     assert(seeds_raw.size() % 2 == 0 && "Seed amount has to be even!");
 
+    std::vector<Day05::Range> seeds{};
+
+    for (std::size_t i = 0; i < seeds_raw.size() / 2; ++i) {
+      const auto start = seeds_raw.at(i * 2);
+      const auto length = seeds_raw.at(i * 2 + 1);
+      seeds.emplace_back(start, start + length - 1);
+    }
+
     // delete the first two lines!
     lines.erase(lines.begin());
     lines.erase(lines.begin());
@@ -212,33 +346,28 @@ struct AoCDay05 : AoCDay {
           Day05::MapEntry{numbers.at(0), numbers.at(1), numbers.at(2)});
     }
 
-    ResultType result = std::numeric_limits<ResultType>::max();
+    for (const auto &map : maps) {
 
-    for (std::size_t i = 0; i < seeds_raw.size() / 2; ++i) {
-      std::cout << "i: " << i <<  " / "<< (seeds_raw.size() / 2) << "\n";
-      const auto start = seeds_raw.at(i * 2);
-      const auto length = seeds_raw.at(i * 2 + 1);
+      std::vector<Day05::Range> temp{};
 
-      std::vector<ResultType> seeds{};
+      for (std::size_t i = 0; i < seeds.size(); ++i) {
 
-      for (ResultType value = start; value < start + length; ++value) {
-        seeds.push_back(value);
-      }
-
-      for (const auto &map : maps) {
-        for (std::size_t i = 0; i < seeds.size(); ++i) {
-
-          seeds.at(i) = map.map(seeds.at(i));
+        const auto res = map.map_range(seeds.at(i));
+        for (const auto &elem : res) {
+          temp.push_back(elem);
         }
       }
 
-      std::sort(seeds.begin(), seeds.end());
-
-      result = std::min(seeds.at(0), result);
-      ;
+      seeds.clear();
+      // TODO: it would be possible to merge ranges here
+      for (const auto &elem : temp) {
+        seeds.push_back(elem);
+      }
     }
 
-    return result;
+    std::sort(seeds.begin(), seeds.end());
+
+    return seeds.at(0).first;
   }
 };
 
