@@ -1,6 +1,7 @@
 
 
 #include "helpers/base.hpp"
+#include "helpers/parser.hpp"
 #include "helpers/utility.hpp"
 
 #include <algorithm>
@@ -11,29 +12,6 @@
 #include <variant>
 
 namespace Day03 {
-
-    std::optional<std::uint64_t> get_number(const std::string& inp) {
-        char* end = nullptr;
-        const char* c_str = inp.c_str();
-
-        // don't allow -  or + or similar!
-        if (!isdigit(*c_str)) {
-            return std::nullopt;
-        }
-
-        // this function is bad, use better ones in the future!
-        std::uint64_t result = std::strtoull(c_str, &end, 10);
-
-        if (errno != 0) {
-            return std::nullopt;
-        }
-        if (end == c_str) {
-            return std::nullopt;
-        }
-
-        return result;
-    }
-
     enum class CharClass { Period, Symbol, Gear };
 
 } // namespace Day03
@@ -63,7 +41,7 @@ struct AoCDay03 : AoCDay {
             std::vector<VectorContent> inner_vec{};
 
             while (pos < line.size()) {
-                auto num = Day03::get_number(line.substr(pos));
+                auto num = get_number<std::uint64_t>(line.substr(pos));
                 if (num.has_value()) {
 
                     auto value = std::make_shared<std::uint64_t>(num.value());
@@ -193,7 +171,7 @@ struct AoCDay03 : AoCDay {
             std::vector<VectorContent> inner_vec{};
 
             while (pos < line.size()) {
-                auto num = Day03::get_number(line.substr(pos));
+                auto num = get_number<std::uint64_t>(line.substr(pos));
                 if (num.has_value()) {
 
                     auto value = std::make_shared<std::uint64_t>(num.value());

@@ -1,6 +1,7 @@
 
 
 #include "helpers/base.hpp"
+#include "helpers/parser.hpp"
 #include "helpers/utility.hpp"
 
 #include <algorithm>
@@ -14,28 +15,6 @@
 #include <variant>
 
 namespace Day05 {
-
-    std::optional<std::uint64_t> get_number(const std::string& inp) {
-        char* end = nullptr;
-        const char* c_str = inp.c_str();
-
-        // don't allow -  or + or similar!
-        if (!isdigit(*c_str)) {
-            return std::nullopt;
-        }
-
-        // this function is bad, use better ones in the future!
-        std::uint64_t result = std::strtoull(c_str, &end, 10);
-
-        if (errno != 0) {
-            return std::nullopt;
-        }
-        if (end == c_str) {
-            return std::nullopt;
-        }
-
-        return result;
-    }
 
     using Range = std::pair<ResultType, ResultType>;
 
@@ -238,7 +217,7 @@ struct AoCDay05 : AoCDay {
                 continue;
             }
 
-            const auto num = Day05::get_number(seed);
+            const auto num = get_number<ResultType>(seed);
             assert_has_value(num, "seed has to be a number");
             seeds.push_back(num.value());
         }
@@ -248,14 +227,14 @@ struct AoCDay05 : AoCDay {
         lines.erase(lines.begin());
 
         std::vector<Day05::Map> maps{};
-        maps.push_back(Day05::Map{});
+        maps.emplace_back(Day05::Map{});
 
         std::size_t index = 0;
 
         for (const auto& line : lines) {
 
             if (line.empty()) {
-                maps.push_back(Day05::Map{});
+                maps.emplace_back(Day05::Map{});
                 ++index;
                 continue;
             }
@@ -268,7 +247,7 @@ struct AoCDay05 : AoCDay {
 
             for (const auto& number_str : splitByRegex(line, R"( )")) {
 
-                const auto num = Day05::get_number(number_str);
+                const auto num = get_number<ResultType>(number_str);
                 assert_has_value(num, "entry has to be a number");
                 numbers.push_back(num.value());
             }
@@ -279,9 +258,8 @@ struct AoCDay05 : AoCDay {
         }
 
         for (const auto& map : maps) {
-            for (std::size_t i = 0; i < seeds.size(); ++i) {
-
-                seeds.at(i) = map.map(seeds.at(i));
+            for (auto& seed : seeds) {
+                seed = map.map(seed);
             }
         }
 
@@ -305,7 +283,7 @@ struct AoCDay05 : AoCDay {
                 continue;
             }
 
-            const auto num = Day05::get_number(seed);
+            const auto num = get_number<ResultType>(seed);
             assert_has_value(num, "seed has to be a number");
             seeds_raw.push_back(num.value());
         }
@@ -325,14 +303,14 @@ struct AoCDay05 : AoCDay {
         lines.erase(lines.begin());
 
         std::vector<Day05::Map> maps{};
-        maps.push_back(Day05::Map{});
+        maps.emplace_back(Day05::Map{});
 
         std::size_t index = 0;
 
         for (const auto& line : lines) {
 
             if (line.empty()) {
-                maps.push_back(Day05::Map{});
+                maps.emplace_back(Day05::Map{});
                 ++index;
                 continue;
             }
@@ -345,7 +323,7 @@ struct AoCDay05 : AoCDay {
 
             for (const auto& number_str : splitByRegex(line, R"( )")) {
 
-                const auto num = Day05::get_number(number_str);
+                const auto num = get_number<ResultType>(number_str);
                 assert_has_value(num, "entry has to be a number");
                 numbers.push_back(num.value());
             }
@@ -359,9 +337,9 @@ struct AoCDay05 : AoCDay {
 
             std::vector<Day05::Range> temp{};
 
-            for (std::size_t i = 0; i < seeds.size(); ++i) {
+            for (const auto& seed : seeds) {
 
-                const auto res = map.map_range(seeds.at(i));
+                const auto res = map.map_range(seed);
                 for (const auto& elem : res) {
                     temp.push_back(elem);
                 }

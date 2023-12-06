@@ -1,6 +1,7 @@
 
 
 #include "helpers/base.hpp"
+#include "helpers/parser.hpp"
 #include "helpers/utility.hpp"
 
 #include <algorithm>
@@ -12,31 +13,6 @@
 #include <unordered_map>
 #include <utility>
 #include <variant>
-
-namespace Day04 {
-
-    std::optional<std::uint64_t> get_number(const std::string& inp) {
-        char* end = nullptr;
-        const char* c_str = inp.c_str();
-
-        // don't allow -  or + or similar!
-        if (!isdigit(*c_str)) {
-            return std::nullopt;
-        }
-
-        // this function is bad, use better ones in the future!
-        std::uint64_t result = std::strtoull(c_str, &end, 10);
-
-        if (errno != 0) {
-            return std::nullopt;
-        }
-        if (end == c_str) {
-            return std::nullopt;
-        }
-
-        return result;
-    }
-} // namespace Day04
 
 struct AoCDay04 : AoCDay {
 
@@ -54,7 +30,7 @@ struct AoCDay04 : AoCDay {
                 if (num.empty()) {
                     continue;
                 }
-                const auto num_value = Day04::get_number(num);
+                const auto num_value = get_number<ResultType>(num);
                 assert_has_value(num_value, "This has to be a number");
                 vec.push_back(num_value.value());
             }
@@ -105,7 +81,7 @@ struct AoCDay04 : AoCDay {
                 if (num.empty()) {
                     continue;
                 }
-                const auto num_value = Day04::get_number(num);
+                const auto num_value = get_number<ResultType>(num);
                 assert_has_value(num_value, "This has to be a number");
                 vec.push_back(num_value.value());
             }
@@ -131,7 +107,7 @@ struct AoCDay04 : AoCDay {
 
             const auto cardSplit = splitByRegex(gameParts.at(0), R"( )");
 
-            const auto cardNumber = Day04::get_number(cardSplit.back());
+            const auto cardNumber = get_number<ResultType>(cardSplit.back());
             assert_has_value(cardNumber, "cardNumber has to be a number!");
             const auto winningNumbers = parse_numbers(gameParts.at(1));
 
