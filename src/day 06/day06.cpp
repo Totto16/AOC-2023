@@ -53,6 +53,25 @@ void parseNumberArray(std::vector<ResultType> &vec, const std::string &inp) {
   }
 }
 
+void parseNumber(std::vector<ResultType> &vec, const std::string &inp) {
+
+  std::string temp{};
+  for (const auto &num : splitByRegex(inp, R"( )")) {
+
+    if (num.empty()) {
+      continue;
+    }
+
+    temp += num;
+  }
+
+  const auto prev_size = vec.size();
+
+  parseNumberArray(vec, temp);
+
+  assert(vec.size() - 1 == prev_size && "Expected exactly one number!");
+}
+
 } // namespace Day06
 
 struct AoCDay06 : AoCDay {
@@ -106,13 +125,46 @@ struct AoCDay06 : AoCDay {
 
   ResultType solvePart2(const std::string &input,
                         [[maybe_unused]] const bool is_example) const override {
-    ResultType result = 0;
+    ResultType result = 1;
 
-    result += input.size();
+    std::vector<ResultType> times;
+    std::vector<ResultType> distances;
+
+    for (const auto &line : splitByNewLine(input)) {
+      if (line.empty()) {
+        continue;
+      }
+
+      if (times.empty()) {
+        Day06::parseNumber(times, splitByRegex(line, R"(:)").at(1));
+      } else {
+        Day06::parseNumber(distances, splitByRegex(line, R"(:)").at(1));
+      }
+    }
+
+    assert(times.size() == distances.size() && times.size() == 1 &&
+           "Times and distances have to equally long and 1 long (part 2)!");
+
+    for (std::size_t i = 0; i < times.size(); ++i) {
+      const auto &time = times.at(i);
+      const auto distance = distances.at(i);
+
+      ResultType temp = 0;
+
+      for (ResultType i = 1; i < time; ++i) {
+        if (i * (time - i) > distance) {
+          ++temp;
+        }
+      }
+
+      if (temp >= 1) {
+        result *= temp;
+      }
+    }
 
     return result;
   }
 };
 
 DayRegister<AoCDay06> day06{Input::SameInput("input.txt") >>
-                            Input::SameExample("example.txt", 288, -1)};
+                            Input::SameExample("example.txt", 288, 71503)};
