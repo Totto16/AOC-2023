@@ -17,14 +17,14 @@ jobs:
 
             - name: Setup Clang Format
               run: |
-                  apt-get update
-                  apt-get install lsb-release wget software-properties-common gnupg -y
-                  wget https://apt.llvm.org/llvm.sh
+                  sudo apt-get update
+                  sudo apt-get install lsb-release wget software-properties-common gnupg -y
+                  sudo wget https://apt.llvm.org/llvm.sh
                   chmod +x llvm.sh
-                  ./llvm.sh 17
-                  rm llvm.sh
-                  apt-get update
-                  apt-get install clang-format-17 -y
+                  sudo ./llvm.sh 17
+                  sudo rm llvm.sh
+                  sudo apt-get update
+                  sudo apt-get install clang-format-17 -y
 
             - name: Check Formatting
               run: |
