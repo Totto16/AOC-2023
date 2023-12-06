@@ -39,7 +39,7 @@ std::optional<std::uint64_t> get_number(const std::string &inp) {
 
 using Range = std::pair<ResultType, ResultType>;
 
-enum class RangeState {
+enum class RangeState : std::uint8_t {
   FullyInclusive,
   NoOverlap,
   ThreeWayOverlap,
@@ -76,7 +76,7 @@ RangeState ranges_overlap(const Range &source, const Range &dest) {
     return RangeState::LeftOverlap;
   }
 
-  assert(false && "UNREACHABLE or didn't handel range case!");
+  assert_unreachable("didn't handle range case!");
 }
 
 struct MapEntry {
@@ -95,7 +95,7 @@ public:
   }
 
   ResultType map(const ResultType input) const {
-    assert(in_source_range(input) && "only mappable, if in source range");
+    assert_true(in_source_range(input), "only mappable, if in source range");
     return input - source.first + dest_start;
   }
 
@@ -105,8 +105,8 @@ public:
 
   Range map_fully(const Range &input) const {
 
-    assert(range_state(input) == RangeState::FullyInclusive &&
-           "only fully mappable, if 'FullyInclusive'");
+    assert_equal_enum(range_state(input), RangeState::FullyInclusive,
+                      "only fully mappable, if 'FullyInclusive'");
 
     const auto &[start, end] = input;
     const auto shift_amount = dest_start - source.first;
@@ -132,7 +132,7 @@ public:
               {Range{start, own_start - 1}, Range{own_end + 1, end}}};
 
     default:
-      assert(false && "only partly mappable, if overlapping");
+      assert_unreachable("only partly mappable, if overlapping");
     }
   }
 };
@@ -185,7 +185,7 @@ struct Map {
           break;
         }
         default:
-          assert(false && "UNREACHBALE");
+          assert_unreachable("RangeState not covered completely");
         }
       }
 
@@ -228,7 +228,8 @@ struct AoCDay05 : AoCDay {
 
     const auto seed_list = splitByRegex(lines.at(0), R"(:)");
 
-    assert(seed_list.size() == 2 && "seed list has to be the correct length");
+    assert_equal<std::size_t>(seed_list.size(), 2u,
+                              "seed list has to be the correct length");
 
     for (const auto &seed : splitByRegex(seed_list.at(1), R"( )")) {
 
@@ -237,7 +238,7 @@ struct AoCDay05 : AoCDay {
       }
 
       const auto num = Day05::get_number(seed);
-      assert(num.has_value() && "seed has to be a number");
+      assert_has_value(num, "seed has to be a number");
       seeds.push_back(num.value());
     }
 
@@ -267,11 +268,12 @@ struct AoCDay05 : AoCDay {
       for (const auto &number_str : splitByRegex(line, R"( )")) {
 
         const auto num = Day05::get_number(number_str);
-        assert(num.has_value() && "entry has to be a number");
+        assert_has_value(num, "entry has to be a number");
         numbers.push_back(num.value());
       }
 
-      assert(numbers.size() == 3 && "A map has to have 3 entries");
+      assert_equal<std::size_t>(numbers.size(), 3u,
+                                "A map has to have 3 entries");
 
       maps.at(index).add(
           Day05::MapEntry{numbers.at(0), numbers.at(1), numbers.at(2)});
@@ -297,7 +299,8 @@ struct AoCDay05 : AoCDay {
 
     const auto seed_list = splitByRegex(lines.at(0), R"(:)");
 
-    assert(seed_list.size() == 2 && "seed list has to be the correct length");
+    assert_equal<std::size_t>(seed_list.size(), 2u,
+                              "seed list has to be the correct length");
 
     for (const auto &seed : splitByRegex(seed_list.at(1), R"( )")) {
 
@@ -306,11 +309,12 @@ struct AoCDay05 : AoCDay {
       }
 
       const auto num = Day05::get_number(seed);
-      assert(num.has_value() && "seed has to be a number");
+      assert_has_value(num, "seed has to be a number");
       seeds_raw.push_back(num.value());
     }
 
-    assert(seeds_raw.size() % 2 == 0 && "Seed amount has to be even!");
+    assert_equal<std::size_t>(seeds_raw.size() % 2, 0u,
+                              "Seed amount has to be even!");
 
     std::vector<Day05::Range> seeds{};
 
@@ -346,11 +350,12 @@ struct AoCDay05 : AoCDay {
       for (const auto &number_str : splitByRegex(line, R"( )")) {
 
         const auto num = Day05::get_number(number_str);
-        assert(num.has_value() && "entry has to be a number");
+        assert_has_value(num, "entry has to be a number");
         numbers.push_back(num.value());
       }
 
-      assert(numbers.size() == 3 && "A map has to have 3 entries");
+      assert_equal<std::size_t>(numbers.size(), 3u,
+                                "A map has to have 3 entries");
 
       maps.at(index).add(
           Day05::MapEntry{numbers.at(0), numbers.at(1), numbers.at(2)});

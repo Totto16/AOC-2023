@@ -47,7 +47,7 @@ void parseNumberArray(std::vector<ResultType> &vec, const std::string &inp) {
 
     const auto num_value = get_number(num);
 
-    assert(num_value.has_value() && "Expected number!");
+    assert_has_value(num_value, "Expected number!");
 
     vec.push_back(num_value.value());
   }
@@ -69,7 +69,8 @@ void parseNumber(std::vector<ResultType> &vec, const std::string &inp) {
 
   parseNumberArray(vec, temp);
 
-  assert(vec.size() - 1 == prev_size && "Expected exactly one number!");
+  assert_equal<std::size_t>(vec.size() - 1, prev_size,
+                            "Expected exactly one number!");
 }
 
 } // namespace Day06
@@ -100,8 +101,8 @@ struct AoCDay06 : AoCDay {
       }
     }
 
-    assert(times.size() == distances.size() &&
-           "Times and distances have to equally long!");
+    assert_equal<std::size_t>(times.size(), distances.size(),
+                              "Times and distances have to equally long!");
 
     for (std::size_t i = 0; i < times.size(); ++i) {
       const auto &time = times.at(i);
@@ -142,8 +143,11 @@ struct AoCDay06 : AoCDay {
       }
     }
 
-    assert(times.size() == distances.size() && times.size() == 1 &&
-           "Times and distances have to equally long and 1 long (part 2)!");
+    assert_equal<std::size_t>(times.size(), distances.size(),
+                              "Times and distances have to equally "
+                              "long!");
+    assert_equal<std::size_t>(
+        times.size(), 1u, "Times and distances have to have only oen element!");
 
     for (std::size_t i = 0; i < times.size(); ++i) {
       const auto &time = times.at(i);

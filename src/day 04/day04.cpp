@@ -56,7 +56,7 @@ struct AoCDay04 : AoCDay {
           continue;
         }
         const auto num_value = Day04::get_number(num);
-        assert(num_value.has_value() && "This has to be a number");
+        assert_has_value(num_value, "This has to be a number");
         vec.push_back(num_value.value());
       }
 
@@ -110,7 +110,7 @@ struct AoCDay04 : AoCDay {
           continue;
         }
         const auto num_value = Day04::get_number(num);
-        assert(num_value.has_value() && "This has to be a number");
+        assert_has_value(num_value, "This has to be a number");
         vec.push_back(num_value.value());
       }
 
@@ -137,7 +137,7 @@ struct AoCDay04 : AoCDay {
       const auto cardSplit = splitByRegex(gameParts.at(0), R"( )");
 
       const auto cardNumber = Day04::get_number(cardSplit.back());
-      assert(cardNumber.has_value() && "cardNumber has to be a number!");
+      assert_has_value(cardNumber, "cardNumber has to be a number!");
       const auto winningNumbers = parse_numbers(gameParts.at(1));
 
       const auto myNumbers = parse_numbers(parts.at(1));

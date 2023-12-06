@@ -12,9 +12,6 @@
 #include <string>
 #include <vector>
 
-// TODO: remove
-#include <cassert>
-
 [[nodiscard]] std::vector<std::string>
 splitByRegex(const std::string &content, const std::string in_pattern);
 
