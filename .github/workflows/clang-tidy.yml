@@ -1,4 +1,4 @@
-name: Check Code Formatting
+name: Check With Clang Tidy
 
 on:
     push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
     build:
-        name: Clang-Format Test
+        name: Clang-Tidy Test
         runs-on: ubuntu-22.04
         steps:
             - uses: actions/checkout@v3
@@ -24,7 +24,7 @@ jobs:
                   sudo ./llvm.sh 17
                   sudo rm llvm.sh
                   sudo apt-get update
-                  sudo apt-get install clang-17 clang-format-17 python3 python3-pip ninja-build pkg-config -y
+                  sudo apt-get install clang-17 clang-tidy-17 python3 python3-pip ninja-build pkg-config -y
 
             - name: Setup Meson and Compilation database
               run: |
