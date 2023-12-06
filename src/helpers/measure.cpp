@@ -29,7 +29,7 @@ std::string internals::to_string(const std::chrono::nanoseconds& dur, const Prin
     for (std::uint8_t i = 0; i < durations.size(); ++i) {
         const auto& [duration, unit, singular, plural, count] = durations.at(i);
 
-        const auto trailingWhiteSpace = i + 1u != durations.size() ? " " : "";
+        const auto* trailingWhiteSpace = i + 1u != durations.size() ? " " : "";
         const bool shouldPrint = (printed_earlier || duration >= unit) && max > 0;
 
         if (shouldPrint) {

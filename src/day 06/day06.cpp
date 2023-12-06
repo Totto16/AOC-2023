@@ -7,7 +7,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <deque>
-#include <errno.h>
+#include <cerrno>
 #include <memory>
 #include <unordered_map>
 #include <utility>

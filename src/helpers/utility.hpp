@@ -12,9 +12,9 @@
 #include <string>
 #include <vector>
 
-[[nodiscard]] std::vector<std::string> splitByRegex(const std::string& content, const std::string in_pattern);
+[[nodiscard]] std::vector<std::string> splitByRegex(const std::string& content, const std::string& in_pattern);
 
-[[nodiscard]] std::vector<std::string> splitByRegex(const std::string& content, const std::regex pattern);
+[[nodiscard]] std::vector<std::string> splitByRegex(const std::string& content, const std::regex& pattern);
 
 [[nodiscard]] std::vector<std::string> splitByNewLine(const std::string& content);
 

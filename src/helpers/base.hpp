@@ -146,24 +146,24 @@ struct InputDescriptionGeneratorMultiple {
 };
 
 InputDescriptionGeneratorMultiple
-operator>>(const InputDescriptionGeneratorSingle first, const InputDescriptionGeneratorSingle second);
+operator>>(const InputDescriptionGeneratorSingle& first, const InputDescriptionGeneratorSingle& second);
 
 InputDescriptionGeneratorMultiple
-operator>>(const InputDescriptionGeneratorSingle first, const InputDescriptionGeneratorMultiple second);
+operator>>(const InputDescriptionGeneratorSingle& first, const InputDescriptionGeneratorMultiple& second);
 
 InputDescriptionGeneratorMultiple
-operator>>(const InputDescriptionGeneratorMultiple first, const InputDescriptionGeneratorSingle second);
+operator>>(const InputDescriptionGeneratorMultiple& first, const InputDescriptionGeneratorSingle& second);
 InputDescriptionGeneratorMultiple
-operator>>(const InputDescriptionGeneratorMultiple first, const InputDescriptionGeneratorMultiple second);
+operator>>(const InputDescriptionGeneratorMultiple& first, const InputDescriptionGeneratorMultiple& second);
 namespace Input {
 
-    InputDescriptionGeneratorMultiple SameInput(std::string name);
+    InputDescriptionGeneratorMultiple SameInput(const std::string& name);
 
-    InputDescriptionGeneratorSingle Input(std::string name);
+    InputDescriptionGeneratorSingle Input(const std::string& name);
 
-    InputDescriptionGeneratorMultiple SameExample(std::string name, ResultType result1, ResultType result2);
+    InputDescriptionGeneratorMultiple SameExample(const std::string& name, ResultType result1, ResultType result2);
 
-    InputDescriptionGeneratorSingle ExampleInput(std::string name, ResultType result);
+    InputDescriptionGeneratorSingle ExampleInput(const std::string& name, ResultType result);
 } // namespace Input
 
 struct SuccessResult { };

@@ -20,13 +20,13 @@ helpers::expected<std::string, std::string> internals::read(std::filesystem::pat
 }
 
 InputDescriptionGeneratorMultiple
-operator>>(const InputDescriptionGeneratorSingle first, const InputDescriptionGeneratorSingle second) {
+operator>>(const InputDescriptionGeneratorSingle& first, const InputDescriptionGeneratorSingle& second) {
 
     return InputDescriptionGeneratorMultiple{ first, second };
 }
 
 InputDescriptionGeneratorMultiple
-operator>>(const InputDescriptionGeneratorSingle first, const InputDescriptionGeneratorMultiple second) {
+operator>>(const InputDescriptionGeneratorSingle& first, const InputDescriptionGeneratorMultiple& second) {
 
     InputDescriptionGeneratorMultiple result{ first };
 
@@ -38,7 +38,7 @@ operator>>(const InputDescriptionGeneratorSingle first, const InputDescriptionGe
 }
 
 InputDescriptionGeneratorMultiple
-operator>>(const InputDescriptionGeneratorMultiple first, const InputDescriptionGeneratorSingle second) {
+operator>>(const InputDescriptionGeneratorMultiple& first, const InputDescriptionGeneratorSingle& second) {
 
     InputDescriptionGeneratorMultiple result{};
 
@@ -51,7 +51,7 @@ operator>>(const InputDescriptionGeneratorMultiple first, const InputDescription
 }
 
 InputDescriptionGeneratorMultiple
-operator>>(const InputDescriptionGeneratorMultiple first, const InputDescriptionGeneratorMultiple second) {
+operator>>(const InputDescriptionGeneratorMultiple& first, const InputDescriptionGeneratorMultiple& second) {
     InputDescriptionGeneratorMultiple result{};
 
     for (const auto& elem : first.all) {
@@ -65,7 +65,7 @@ operator>>(const InputDescriptionGeneratorMultiple first, const InputDescription
     return result;
 }
 
-InputDescriptionGeneratorMultiple Input::SameInput(std::string name) {
+InputDescriptionGeneratorMultiple Input::SameInput(const std::string& name) {
 
     return InputDescriptionGeneratorMultiple{
         InputDescriptionGeneratorSingle{InputDescriptionGenerateTag::InputTag, name},
@@ -73,12 +73,12 @@ InputDescriptionGeneratorMultiple Input::SameInput(std::string name) {
     };
 }
 
-InputDescriptionGeneratorSingle Input::Input(std::string name) {
+InputDescriptionGeneratorSingle Input::Input(const std::string& name) {
 
     return InputDescriptionGeneratorSingle{ InputDescriptionGenerateTag::InputTag, name };
 }
 
-InputDescriptionGeneratorMultiple Input::SameExample(std::string name, ResultType result1, ResultType result2) {
+InputDescriptionGeneratorMultiple Input::SameExample(const std::string& name, ResultType result1, ResultType result2) {
 
     return InputDescriptionGeneratorMultiple{
         InputDescriptionGeneratorSingle{InputDescriptionGenerateTag::ExampleTag, name, result1},
@@ -86,7 +86,7 @@ InputDescriptionGeneratorMultiple Input::SameExample(std::string name, ResultTyp
     };
 }
 
-InputDescriptionGeneratorSingle Input::ExampleInput(std::string name, ResultType result) {
+InputDescriptionGeneratorSingle Input::ExampleInput(const std::string& name, ResultType result) {
 
     return InputDescriptionGeneratorSingle{ InputDescriptionGenerateTag::ExampleTag, name, result };
 }
@@ -113,7 +113,7 @@ std::vector<DayType> get_available_days() {
 }
 
 std::shared_ptr<std::unordered_map<DayType, AoCDayStorageType>> internals::global_init::available_days() {
-    static std::shared_ptr<std::unordered_map<DayType, AoCDayStorageType>> temp =
+    const static std::shared_ptr<std::unordered_map<DayType, AoCDayStorageType>> temp =
             std::make_shared<std::unordered_map<DayType, AoCDayStorageType>>();
     return temp;
 }
