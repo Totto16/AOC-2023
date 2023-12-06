@@ -8,7 +8,7 @@ struct AoCDay01 : AoCDay {
         //
     }
 
-    ResultType solve(std::string input, std::vector<std::string> numLiterals) const {
+    ResultType solve(const std::string& input, std::vector<std::string> numLiterals) const {
 
         ResultType result = 0;
 
@@ -24,7 +24,7 @@ struct AoCDay01 : AoCDay {
 
                 const char& c = temp.at(i);
 
-                if (isdigit(c)) {
+                if (isdigit(c) != 0) {
                     numbers.push_back(c - '0');
                 }
 

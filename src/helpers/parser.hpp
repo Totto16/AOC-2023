@@ -12,7 +12,7 @@
 
 #include <lexy/action/parse.hpp> // lexy::parse
 #include <lexy/callback.hpp>
-#include <lexy/dsl.hpp>        // lexy::dsl::*
+#include <lexy/dsl.hpp> // lexy::dsl::*
 #include <lexy/input/string_input.hpp>
 #include <lexy_ext/report_error.hpp> // lexy_ext::report_error
 

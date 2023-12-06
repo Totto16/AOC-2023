@@ -80,8 +80,9 @@ struct AoCDay03 : AoCDay {
                     Overloaded{ [](const Day03::CharClass&) -> std::optional<std::shared_ptr<ResultType>> {
                                    return std::nullopt;
                                },
-                                [](const std::shared_ptr<ResultType>& s
-                                ) -> std::optional<std::shared_ptr<ResultType>> { return s; } },
+                                [](const std::shared_ptr<ResultType>& s) -> std::optional<std::shared_ptr<ResultType>> {
+                                    return s;
+                                } },
                     rows.at(i).at(j)
             );
         };
@@ -212,8 +213,9 @@ struct AoCDay03 : AoCDay {
                     Overloaded{ [](const Day03::CharClass&) -> std::optional<std::shared_ptr<ResultType>> {
                                    return std::nullopt;
                                },
-                                [](const std::shared_ptr<ResultType>& s
-                                ) -> std::optional<std::shared_ptr<ResultType>> { return s; } },
+                                [](const std::shared_ptr<ResultType>& s) -> std::optional<std::shared_ptr<ResultType>> {
+                                    return s;
+                                } },
                     rows.at(i).at(j)
             );
         };

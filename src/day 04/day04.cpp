@@ -5,9 +5,9 @@
 #include "helpers/utility.hpp"
 
 #include <algorithm>
+#include <cerrno>
 #include <cstdlib>
 #include <deque>
-#include <cerrno>
 #include <memory>
 #include <unordered_map>
 #include <utility>
@@ -129,8 +129,7 @@ struct AoCDay04 : AoCDay {
             remainingCards.push_back(key);
         }
 
-        while (remainingCards.size() != 0) {
-
+        while (!remainingCards.empty()) {
             const auto currentCard = remainingCards.front();
             remainingCards.pop_front();
             ++result;
