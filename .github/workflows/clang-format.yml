@@ -1,0 +1,31 @@
+name: Compile Code
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+    workflow_dispatch:
+
+jobs:
+    build:
+        name: Clang-Format Test
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  fetch-depth: "0"
+
+            - name: Setup Clang Format
+              run: |
+                  apt-get update
+                  apt-get install lsb-release wget software-properties-common gnupg -y
+                  wget https://apt.llvm.org/llvm.sh
+                  chmod +x llvm.sh
+                  ./llvm.sh 17
+                  rm llvm.sh
+                  apt-get update
+                  apt-get install clang-format-17 -y
+
+            - name: Check Formatting
+              run: |
+                  find src/ \( -iname *.h -o -iname *.cpp -o -iname *.hpp \) -exec  clang-format-17 --Werror -n --verbose {} +
