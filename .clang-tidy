@@ -4,7 +4,7 @@ Checks: "clang-diagnostic-*,clang-analyzer-*,bugprone-*,misc-*,performance-*,rea
 WarningsAsErrors: "bugprone-narrowing-conversions,cppcoreguidelines-narrowing-conversions,misc-const-correctness,bugprone-implicit-widening-of-multiplication-result,clang-diagnostic-old-style-cast,readability-implicit-bool-conversion,performance-type-promotion-in-math-fn,performance-avoid-endl,readability-const-return-type,cppcoreguidelines-init-variables,modernize-return-braced-init-list,modernize-use-nullptr,performance-unnecessary-value-param,modernize-use-nodiscard" # this is specially made for this project!
 AnalyzeTemporaryDtors: false
 FormatStyle: "file"
-HeaderFilterRegex: "src/.*"
+HeaderFilterRegex: "(?:^(?:[\\.\\/]*)src\\/.*$)"
 CheckOptions:
     - key: bugprone-argument-comment.CommentBoolLiterals
       value: "0"
