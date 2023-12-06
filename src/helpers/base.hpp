@@ -55,7 +55,7 @@ namespace internals {
     template<typename T, typename S>
     concept IsBaseOf = std::is_base_of<T, S>::value;
 
-    std::expected<std::string, std::string> read(std::filesystem::path name);
+    helpers::expected<std::string, std::string> read(std::filesystem::path name);
 
     enum class Part { Part1, Part2 };
 
@@ -218,7 +218,7 @@ private:
             return SuccessResult{};
 
         } catch (std::exception& ex) {
-            return helpers::unexpected(std::format(
+            return helpers::unexpected<std::string>(std::format(
                     "{}In example for part {}{}{}{}: {}", ForegroundColor::Red,
                     Color::color(ForegroundColor::Cyan, Modifier::Bold), num, Color::reset(), ForegroundColor::Red,
                     ex.what()
@@ -262,7 +262,7 @@ private:
             return SuccessResult{};
 
         } catch (std::exception& ex) {
-            return helpers::unexpected(std::format(
+            return helpers::unexpected<std::string>(std::format(
 
                     "{}Error while running part {}{}{}{}: {}{}\n", ForegroundColor::Red,
                     Color::color(ForegroundColor::Cyan, Modifier::Bold), num, Color::reset(), ForegroundColor::Red,
@@ -302,7 +302,7 @@ public:
 
             return SuccessResult{};
         } catch (std::exception& ex) {
-            return helpers::unexpected(ex.what());
+            return helpers::unexpected<std::string>(ex.what());
         }
     }
 };
