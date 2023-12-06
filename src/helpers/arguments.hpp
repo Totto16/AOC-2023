@@ -13,9 +13,8 @@
 #define STR_IMPL(a) #a
 
 struct Arguments {
-  DayType day;
-  bool measureTime;
+    DayType day;
+    bool measureTime;
 };
 
-[[nodiscard]] const Arguments
-parse_arguments(const std::vector<std::string> &arguments);
+[[nodiscard]] const Arguments parse_arguments(const std::vector<std::string>& arguments);
