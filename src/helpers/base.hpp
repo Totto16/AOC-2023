@@ -274,7 +274,7 @@ private:
 public:
     DayType day;
 
-    ~AoCDay() = default;
+    virtual ~AoCDay() = default;
 
     AoCDay(DayType day) : day{ day } {
         //
