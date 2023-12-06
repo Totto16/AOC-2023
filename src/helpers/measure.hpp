@@ -64,7 +64,7 @@ namespace internals {
 template<typename CharT>
 struct std::formatter<std::chrono::nanoseconds, CharT> : std::formatter<std::string, CharT> {
 
-    internals::PrintOptions options{ false, 3 };
+    internals::PrintOptions options{ false, 3, true };
 
     constexpr auto parse(std::format_parse_context& ctx) {
         auto pos = ctx.begin();

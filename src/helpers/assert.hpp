@@ -42,7 +42,7 @@ namespace {
         return Operation<T>{ ">=", std::greater_equal<T>{} };
     }
 
-    ALWAYS_INLINE constexpr void assert_raw(const bool expr, const std::string& message) {
+    ALWAYS_INLINE void assert_raw(const bool expr, const std::string& message) {
 
         std::string internal_message = std::format("{}UNREACHABLE{}", ForegroundColor::Red, Color::reset());
         if (!message.empty()) {
@@ -54,8 +54,7 @@ namespace {
     }
 
     template<typename T>
-    ALWAYS_INLINE constexpr void
-    assert_op(const T& first, const T& second, const std::string& message, const Operation<T>& op) {
+    ALWAYS_INLINE void assert_op(const T& first, const T& second, const std::string& message, const Operation<T>& op) {
 
         std::string internal_message = std::format(
                 "{}not satisfied: {}{}{} {}{} {}{}{}", ForegroundColor::Red,
@@ -70,7 +69,7 @@ namespace {
         PPK_ASSERT(op.compare(first, second), "%s", internal_message.c_str());
     }
     template<typename T>
-    ALWAYS_INLINE constexpr void assert_has_val(const std::optional<T>& option, const std::string& message = "") {
+    ALWAYS_INLINE void assert_has_val(const std::optional<T>& option, const std::string& message = "") {
 
         std::string internal_message = std::format("{}optional has nop value{}", ForegroundColor::Red, Color::reset());
         if (!message.empty()) {
@@ -84,14 +83,14 @@ namespace {
 } // namespace
 
 template<typename T>
-ALWAYS_INLINE constexpr void assert_equal(const T& first, const T& second, const std::string& message = "") {
+ALWAYS_INLINE void assert_equal(const T& first, const T& second, const std::string& message = "") {
 
     assert_op<T>(first, second, message, EqualOp<T>());
 }
 
 // TODO use concepts and std::is_enum!
 template<typename T>
-ALWAYS_INLINE constexpr void assert_equal_enum(const T& first, const T& second, const std::string& message = "") {
+ALWAYS_INLINE void assert_equal_enum(const T& first, const T& second, const std::string& message = "") {
 
     using Type = std::underlying_type_t<T>;
 
@@ -99,22 +98,22 @@ ALWAYS_INLINE constexpr void assert_equal_enum(const T& first, const T& second, 
 }
 
 template<typename T>
-ALWAYS_INLINE constexpr void assert_greater_eq(const T& first, const T& second, const std::string& message = "") {
+ALWAYS_INLINE void assert_greater_eq(const T& first, const T& second, const std::string& message = "") {
 
     assert_op<T>(first, second, message, GreaterEqOp<T>());
 }
 
 template<typename T>
-ALWAYS_INLINE constexpr void assert_has_value(const std::optional<T>& option, const std::string& message = "") {
+ALWAYS_INLINE void assert_has_value(const std::optional<T>& option, const std::string& message = "") {
 
     assert_has_val<T>(option, message);
 }
 
-ALWAYS_INLINE constexpr void assert_true(const bool assertion, const std::string& message = "") {
+ALWAYS_INLINE void assert_true(const bool assertion, const std::string& message = "") {
     assert_raw(assertion, message);
 }
 
-[[noreturn]] ALWAYS_INLINE constexpr void assert_unreachable(const std::string& message) {
+[[noreturn]] ALWAYS_INLINE void assert_unreachable(const std::string& message) {
 
     assert_raw(false, message);
     throw std::runtime_error("UNREACHABLE caught: (assertions are disabled): " + message);
