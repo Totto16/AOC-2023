@@ -21,6 +21,10 @@ deps += dependency(
     'lexy',
 )
 
+deps += dependency(
+    'ppk_assert',
+)
+
 src_files = []
 header_files = []
 inc_dirs = []
