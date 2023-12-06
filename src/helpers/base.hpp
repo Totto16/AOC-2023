@@ -55,7 +55,7 @@ namespace internals {
     template<typename T, typename S>
     concept IsBaseOf = std::is_base_of<T, S>::value;
 
-    helpers::expected<std::string, std::string> read(std::filesystem::path name);
+    helpers::expected<std::string, std::string> read(const std::filesystem::path& name);
 
     enum class Part { Part1, Part2 };
 

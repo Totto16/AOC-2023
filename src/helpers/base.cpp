@@ -2,7 +2,7 @@
 
 #include "base.hpp"
 
-helpers::expected<std::string, std::string> internals::read(std::filesystem::path name) {
+helpers::expected<std::string, std::string> internals::read(const std::filesystem::path& name) {
 
     if (!std::filesystem::exists(name)) {
         return helpers::unexpected<std::string>(std::format("File '{}' doesn't exist!", name.string()));

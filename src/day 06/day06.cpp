@@ -4,10 +4,10 @@
 #include "helpers/utility.hpp"
 
 #include <algorithm>
+#include <cerrno>
 #include <cmath>
 #include <cstdlib>
 #include <deque>
-#include <cerrno>
 #include <memory>
 #include <unordered_map>
 #include <utility>
@@ -20,7 +20,7 @@ namespace Day06 {
         const char* c_str = inp.c_str();
 
         // don't allow -  or + or similar!
-        if (!isdigit(*c_str)) {
+        if (isdigit(*c_str) == 0) {
             return std::nullopt;
         }
 

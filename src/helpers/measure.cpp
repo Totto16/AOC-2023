@@ -26,7 +26,7 @@ std::string internals::to_string(const std::chrono::nanoseconds& dur, const Prin
     bool printed_earlier = options.leading;
     std::uint8_t max = options.leading ? durationsAmount : options.maximum_precision;
 
-    for (std::uint8_t i = 0; i < durations.size(); ++i) {
+    for (std::size_t i = 0; i < durations.size(); ++i) {
         const auto& [duration, unit, singular, plural, count] = durations.at(i);
 
         const auto* trailingWhiteSpace = i + 1u != durations.size() ? " " : "";

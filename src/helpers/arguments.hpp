@@ -17,4 +17,4 @@ struct Arguments {
     bool measureTime;
 };
 
-[[nodiscard]] const Arguments parse_arguments(const std::vector<std::string>& arguments);
+[[nodiscard]] Arguments parse_arguments(const std::vector<std::string>& arguments);

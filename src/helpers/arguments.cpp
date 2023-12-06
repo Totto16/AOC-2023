@@ -2,7 +2,7 @@
 
 #include "arguments.hpp"
 
-const Arguments parse_arguments(const std::vector<std::string>& arguments) {
+Arguments parse_arguments(const std::vector<std::string>& arguments) {
 
     argparse::ArgumentParser program{ arguments.at(0), STRINGIFY(VERSION_STRING), argparse::default_arguments::all };
 
