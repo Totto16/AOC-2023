@@ -33,9 +33,9 @@ struct AoCDay02 : AoCDay {
       };
 
       auto split1 = splitByRegex(game, R"(:)");
-      assert(split1.size() == 2 && "only one ':' expected!");
+      assert_equal<std::size_t>(split1.size(), 2u, "only one ':' expected!");
       auto split2 = splitByRegex(split1.at(0), R"( )");
-      assert(split2.size() == 2 && "expected: game <num>");
+      assert_equal<std::size_t>(split2.size(), 2u, "expected: game <num>");
 
       std::stringstream temp(split2.at(1));
 
@@ -50,7 +50,7 @@ struct AoCDay02 : AoCDay {
           trim(single);
 
           auto parsed = splitByRegex(single, R"( )");
-          assert(parsed.size() == 2 && "expected color <num>");
+          assert_equal<std::size_t>(parsed.size(), 2u, "expected color <num>");
 
           std::stringstream temp(parsed.at(0));
 
@@ -109,9 +109,9 @@ struct AoCDay02 : AoCDay {
                                         std::numeric_limits<ResultType>::min()};
 
       auto split1 = splitByRegex(game, R"(:)");
-      assert(split1.size() == 2 && "only one ':' expected!");
+      assert_equal<std::size_t>(split1.size(), 2u, "only one ':' expected!");
       auto split2 = splitByRegex(split1.at(0), R"( )");
-      assert(split2.size() == 2 && "expected: game <num>");
+      assert_equal<std::size_t>(split2.size(), 2u, "expected: game <num>");
 
       std::stringstream temp(split2.at(1));
 
@@ -126,7 +126,7 @@ struct AoCDay02 : AoCDay {
           trim(single);
 
           auto parsed = splitByRegex(single, R"( )");
-          assert(parsed.size() == 2 && "expected color <num>");
+          assert_equal<std::size_t>(parsed.size(), 2u, "expected color <num>");
 
           std::stringstream temp(parsed.at(0));
 

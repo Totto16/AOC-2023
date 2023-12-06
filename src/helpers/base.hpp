@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "helpers/assert.hpp"
 #include "helpers/color.hpp"
 #include "helpers/measure.hpp"
 

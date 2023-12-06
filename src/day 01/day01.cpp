@@ -36,7 +36,8 @@ struct AoCDay01 : AoCDay {
           }
         }
       }
-      assert(numbers.size() >= 1 && "at least one numbers expected");
+      assert_greater_eq<std::size_t>(numbers.size(), 1u,
+                                     "at least one number expected");
       result += numbers.at(0) * 10 + numbers.back();
     }
 

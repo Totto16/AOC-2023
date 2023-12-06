@@ -71,11 +71,12 @@ struct AoCDay04 : AoCDay {
 
       const auto parts = splitByRegex(line, R"(\|)");
 
-      assert(parts.size() == 2 && "expected two parts");
+      assert_equal<std::size_t>(parts.size(), 2u, "expected two parts");
 
       const auto gameParts = splitByRegex(parts.at(0), R"(:)");
 
-      assert(gameParts.size() == 2 && "expected two parts of the game line!");
+      assert_equal<std::size_t>(gameParts.size(), 2u,
+                                "expected two parts of the game line!");
 
       const auto winningNumbers = parse_numbers(gameParts.at(1));
 
@@ -126,11 +127,12 @@ struct AoCDay04 : AoCDay {
 
       const auto parts = splitByRegex(line, R"(\|)");
 
-      assert(parts.size() == 2 && "expected two parts");
+      assert_equal<std::size_t>(parts.size(), 2u, "expected two parts");
 
       const auto gameParts = splitByRegex(parts.at(0), R"(:)");
 
-      assert(gameParts.size() == 2 && "expected two parts of the game line!");
+      assert_equal<std::size_t>(gameParts.size(), 2u,
+                                "expected two parts of the game line!");
 
       const auto cardSplit = splitByRegex(gameParts.at(0), R"( )");
 
