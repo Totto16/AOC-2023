@@ -35,4 +35,4 @@ jobs:
 
             - name: Check With Clang Tidy
               run: |
-                  find src/ -iname *.cpp -exec clang-tidy-17 -p build {} +
+                  find src/ -iname *.cpp ! -iname *dayxx.cpp -exec clang-tidy-17 -p build {} +
