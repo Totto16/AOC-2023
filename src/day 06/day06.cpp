@@ -1,6 +1,7 @@
 
 
 #include "helpers/base.hpp"
+#include "helpers/parser.hpp"
 #include "helpers/utility.hpp"
 
 #include <algorithm>
@@ -15,27 +16,6 @@
 
 namespace Day06 {
 
-    std::optional<std::uint64_t> get_number(const std::string& inp) {
-        char* end = nullptr;
-        const char* c_str = inp.c_str();
-
-        // don't allow -  or + or similar!
-        if (isdigit(*c_str) == 0) {
-            return std::nullopt;
-        }
-
-        // this function is bad, use better ones in the future!
-        std::uint64_t result = std::strtoull(c_str, &end, 10);
-
-        if (errno != 0) {
-            return std::nullopt;
-        }
-        if (end == c_str) {
-            return std::nullopt;
-        }
-
-        return result;
-    }
 
     void parseNumberArray(std::vector<ResultType>& vec, const std::string& inp) {
 
@@ -45,7 +25,7 @@ namespace Day06 {
                 continue;
             }
 
-            const auto num_value = get_number(num);
+            const auto num_value = get_number<ResultType>(num);
 
             assert_has_value(num_value, "Expected number!");
 

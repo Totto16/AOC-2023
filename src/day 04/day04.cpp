@@ -5,10 +5,9 @@
 #include "helpers/utility.hpp"
 
 #include <algorithm>
-#include <cmath>
 #include <cstdlib>
 #include <deque>
-#include <errno.h>
+#include <cerrno>
 #include <memory>
 #include <unordered_map>
 #include <utility>
@@ -65,7 +64,7 @@ struct AoCDay04 : AoCDay {
                 }
             }
 
-            result += amount == 0 ? 0 : std::pow(2, amount - 1);
+            result += amount == 0 ? 0 : 0x01u << (amount - 1);
         }
 
         return result;

@@ -27,7 +27,7 @@ struct AoCDay03 : AoCDay {
         //
     }
 
-    using VectorContent = std::variant<Day03::CharClass, std::shared_ptr<std::uint64_t>>;
+    using VectorContent = std::variant<Day03::CharClass, std::shared_ptr<ResultType>>;
 
     ResultType solvePart1(const std::string& input, [[maybe_unused]] const bool is_example) const override {
 
@@ -41,10 +41,10 @@ struct AoCDay03 : AoCDay {
             std::vector<VectorContent> inner_vec{};
 
             while (pos < line.size()) {
-                auto num = get_number<std::uint64_t>(line.substr(pos));
+                auto num = get_number<ResultType>(line.substr(pos));
                 if (num.has_value()) {
 
-                    auto value = std::make_shared<std::uint64_t>(num.value());
+                    auto value = std::make_shared<ResultType>(num.value());
 
                     const auto num_size = std::to_string(num.value()).size();
                     for (std::size_t i = 0; i < num_size; ++i) {
@@ -69,19 +69,19 @@ struct AoCDay03 : AoCDay {
         auto is_symbol = [](const VectorContent& cont) {
             return std::visit(
                     Overloaded{ [](const Day03::CharClass& c) { return c == Day03::CharClass::Symbol; },
-                                [](const std::shared_ptr<std::uint64_t>&) { return false; } },
+                                [](const std::shared_ptr<ResultType>&) { return false; } },
                     cont
             );
         };
 
         auto get_number_at = [&rows](const std::size_t i,
-                                     const std::size_t j) -> std::optional<std::shared_ptr<std::uint64_t>> {
+                                     const std::size_t j) -> std::optional<std::shared_ptr<ResultType>> {
             return std::visit(
-                    Overloaded{ [](const Day03::CharClass&) -> std::optional<std::shared_ptr<std::uint64_t>> {
+                    Overloaded{ [](const Day03::CharClass&) -> std::optional<std::shared_ptr<ResultType>> {
                                    return std::nullopt;
                                },
-                                [](const std::shared_ptr<std::uint64_t>& s
-                                ) -> std::optional<std::shared_ptr<std::uint64_t>> { return s; } },
+                                [](const std::shared_ptr<ResultType>& s
+                                ) -> std::optional<std::shared_ptr<ResultType>> { return s; } },
                     rows.at(i).at(j)
             );
         };
@@ -133,7 +133,7 @@ struct AoCDay03 : AoCDay {
                 const auto contained = columns.at(j);
 
                 if (is_symbol(contained)) {
-                    std::vector<std::shared_ptr<std::uint64_t>> added{};
+                    std::vector<std::shared_ptr<ResultType>> added{};
                     for (const auto& [pos_i, pos_j] : get_pos(i, j)) {
 
                         auto res = get_number_at(pos_i, pos_j);
@@ -171,10 +171,10 @@ struct AoCDay03 : AoCDay {
             std::vector<VectorContent> inner_vec{};
 
             while (pos < line.size()) {
-                auto num = get_number<std::uint64_t>(line.substr(pos));
+                auto num = get_number<ResultType>(line.substr(pos));
                 if (num.has_value()) {
 
-                    auto value = std::make_shared<std::uint64_t>(num.value());
+                    auto value = std::make_shared<ResultType>(num.value());
 
                     const auto num_size = std::to_string(num.value()).size();
                     for (std::size_t i = 0; i < num_size; ++i) {
@@ -201,19 +201,19 @@ struct AoCDay03 : AoCDay {
         auto is_gear = [](const VectorContent& cont) {
             return std::visit(
                     Overloaded{ [](const Day03::CharClass& c) { return c == Day03::CharClass::Gear; },
-                                [](const std::shared_ptr<std::uint64_t>&) { return false; } },
+                                [](const std::shared_ptr<ResultType>&) { return false; } },
                     cont
             );
         };
 
         auto get_number_at = [&rows](const std::size_t i,
-                                     const std::size_t j) -> std::optional<std::shared_ptr<std::uint64_t>> {
+                                     const std::size_t j) -> std::optional<std::shared_ptr<ResultType>> {
             return std::visit(
-                    Overloaded{ [](const Day03::CharClass&) -> std::optional<std::shared_ptr<std::uint64_t>> {
+                    Overloaded{ [](const Day03::CharClass&) -> std::optional<std::shared_ptr<ResultType>> {
                                    return std::nullopt;
                                },
-                                [](const std::shared_ptr<std::uint64_t>& s
-                                ) -> std::optional<std::shared_ptr<std::uint64_t>> { return s; } },
+                                [](const std::shared_ptr<ResultType>& s
+                                ) -> std::optional<std::shared_ptr<ResultType>> { return s; } },
                     rows.at(i).at(j)
             );
         };
@@ -265,7 +265,7 @@ struct AoCDay03 : AoCDay {
                 const auto contained = columns.at(j);
 
                 if (is_gear(contained)) {
-                    std::vector<std::shared_ptr<std::uint64_t>> added{};
+                    std::vector<std::shared_ptr<ResultType>> added{};
                     for (const auto& [pos_i, pos_j] : get_pos(i, j)) {
 
                         auto res = get_number_at(pos_i, pos_j);

@@ -1,6 +1,7 @@
 
 
 #include "helpers/base.hpp"
+#include "helpers/parser.hpp"
 #include "helpers/utility.hpp"
 
 #include <algorithm>
@@ -36,10 +37,8 @@ struct AoCDay02 : AoCDay {
             auto split2 = splitByRegex(split1.at(0), R"( )");
             assert_equal<std::size_t>(split2.size(), 2u, "expected: game <num>");
 
-            std::stringstream temp(split2.at(1));
-
-            ResultType game_num;
-            temp >> game_num;
+            const auto game_num = get_number<ResultType>(split2.at(1));
+            assert_has_value(game_num, "Number required here");
 
             for (auto& outer : splitByRegex(split1.at(1), R"(;)")) {
 
@@ -51,26 +50,24 @@ struct AoCDay02 : AoCDay {
                     auto parsed = splitByRegex(single, R"( )");
                     assert_equal<std::size_t>(parsed.size(), 2u, "expected color <num>");
 
-                    std::stringstream temp(parsed.at(0));
-
-                    ResultType num;
-                    temp >> num;
+                    const auto num = get_number<ResultType>(parsed.at(0));
+                    assert_has_value(num, "Number required here");
 
                     const auto& color = parsed.at(1);
 
-                    std::uint8_t index;
+                    std::uint8_t index{};
 
                     if (color == "blue") {
-                        index = BagColor::Blue;
+                        index = std::to_underlying(BagColor::Blue);
                     } else if (color == "green") {
-                        index = BagColor::Green;
+                        index = std::to_underlying(BagColor::Green);
                     } else if (color == "red") {
-                        index = BagColor::Red;
+                        index = std::to_underlying(BagColor::Red);
                     } else {
                         throw std::runtime_error(std::format("Unrecognized color {}", color));
                     }
 
-                    maximum.at(index) = std::max(maximum.at(index), num);
+                    maximum.at(index) = std::max(maximum.at(index), num.value());
                 }
             }
 
@@ -84,7 +81,7 @@ struct AoCDay02 : AoCDay {
             }
 
             if (correct) {
-                result += game_num;
+                result += game_num.value();
             }
         }
 
@@ -107,13 +104,6 @@ struct AoCDay02 : AoCDay {
 
             auto split1 = splitByRegex(game, R"(:)");
             assert_equal<std::size_t>(split1.size(), 2u, "only one ':' expected!");
-            auto split2 = splitByRegex(split1.at(0), R"( )");
-            assert_equal<std::size_t>(split2.size(), 2u, "expected: game <num>");
-
-            std::stringstream temp(split2.at(1));
-
-            ResultType game_num;
-            temp >> game_num;
 
             for (auto& outer : splitByRegex(split1.at(1), R"(;)")) {
 
@@ -125,26 +115,24 @@ struct AoCDay02 : AoCDay {
                     auto parsed = splitByRegex(single, R"( )");
                     assert_equal<std::size_t>(parsed.size(), 2u, "expected color <num>");
 
-                    std::stringstream temp(parsed.at(0));
-
-                    ResultType num;
-                    temp >> num;
+                    const auto num = get_number<ResultType>(parsed.at(0));
+                    assert_has_value(num, "Number required here");
 
                     const auto& color = parsed.at(1);
 
-                    std::uint8_t index;
+                    std::uint8_t index{};
 
                     if (color == "blue") {
-                        index = BagColor::Blue;
+                        index = std::to_underlying(BagColor::Blue);
                     } else if (color == "green") {
-                        index = BagColor::Green;
+                        index = std::to_underlying(BagColor::Green);
                     } else if (color == "red") {
-                        index = BagColor::Red;
+                        index = std::to_underlying(BagColor::Red);
                     } else {
                         throw std::runtime_error(std::format("Unrecognized color {}", color));
                     }
 
-                    minimum.at(index) = std::max(minimum.at(index), num);
+                    minimum.at(index) = std::max(minimum.at(index), num.value());
                 }
             }
 
