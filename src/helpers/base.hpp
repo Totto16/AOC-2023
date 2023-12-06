@@ -3,7 +3,6 @@
 #pragma once
 
 #include <cstdint>
-#include <expected>
 #include <filesystem>
 #include <format>
 #include <fstream>
@@ -14,12 +13,42 @@
 #include <unordered_map>
 #include <vector>
 
+#ifdef _USE_TL_EXPECTED
+#include <tl/expected.hpp>
+#else
+#include <expected>
+#endif
+
+
 #include "helpers/assert.hpp"
 #include "helpers/color.hpp"
 #include "helpers/measure.hpp"
 
+
 using DayType = std::uint8_t;
 using ResultType = std::int64_t;
+
+namespace helpers {
+
+#ifdef _USE_TL_EXPECTED
+    template<typename S, typename T>
+    using expected = tl::expected<S, T>;
+
+    template<typename T>
+    using unexpected = tl::unexpected<T>;
+
+#else
+    template<typename S, typename T>
+    using expected = std::expected<S, T>;
+
+    template<typename T>
+    using unexpected = std::unexpected<T>;
+
+#endif
+
+
+} // namespace helpers
+
 
 namespace internals {
 
@@ -143,7 +172,7 @@ struct SuccessResult { };
 // ex.error() if it has an error, it is used in the implementation, see there on
 // how to use it properly
 template<typename T>
-void operator~(const std::expected<T, std::string>& ex) {
+void operator~(const helpers::expected<T, std::string>& ex) {
     if (!ex.has_value()) {
         throw std::runtime_error(ex.error());
     }
@@ -155,7 +184,7 @@ private:
         return std::filesystem::path{ std::format("src/day {:02}/{}", day, name) };
     }
 
-    std::expected<SuccessResult, std::string> executeExample(internals::Part part, Example example) {
+    helpers::expected<SuccessResult, std::string> executeExample(internals::Part part, Example example) {
 
         const uint8_t num = part == internals::Part::Part1 ? 1 : 2;
 
@@ -189,7 +218,7 @@ private:
             return SuccessResult{};
 
         } catch (std::exception& ex) {
-            return std::unexpected(std::format(
+            return helpers::unexpected(std::format(
                     "{}In example for part {}{}{}{}: {}", ForegroundColor::Red,
                     Color::color(ForegroundColor::Cyan, Modifier::Bold), num, Color::reset(), ForegroundColor::Red,
                     ex.what()
@@ -197,7 +226,7 @@ private:
         }
     }
 
-    std::expected<SuccessResult, std::string>
+    helpers::expected<SuccessResult, std::string>
     executePart(internals::Part part, const std::string& name, const bool measureTime) {
         const uint8_t num = part == internals::Part::Part1 ? 1 : 2;
 
@@ -233,7 +262,7 @@ private:
             return SuccessResult{};
 
         } catch (std::exception& ex) {
-            return std::unexpected(std::format(
+            return helpers::unexpected(std::format(
 
                     "{}Error while running part {}{}{}{}: {}{}\n", ForegroundColor::Red,
                     Color::color(ForegroundColor::Cyan, Modifier::Bold), num, Color::reset(), ForegroundColor::Red,
@@ -245,6 +274,8 @@ private:
 public:
     DayType day;
 
+    ~AoCDay() = default;
+
     AoCDay(DayType day) : day{ day } {
         //
     }
@@ -253,7 +284,7 @@ public:
 
     virtual ResultType solvePart2(const std::string& input, bool is_example) const = 0;
 
-    std::expected<SuccessResult, std::string> start(InputDescription description, const bool measureTime) {
+    helpers::expected<SuccessResult, std::string> start(InputDescription description, const bool measureTime) {
 
         try {
 
@@ -271,7 +302,7 @@ public:
 
             return SuccessResult{};
         } catch (std::exception& ex) {
-            return std::unexpected(ex.what());
+            return helpers::unexpected(ex.what());
         }
     }
 };

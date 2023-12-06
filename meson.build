@@ -25,6 +25,26 @@ deps += dependency(
     'ppk_assert',
 )
 
+## check std::expected support
+cpp = meson.get_compiler('cpp')
+has_std__expected = cpp.compiles(
+    '''
+#include <expected>
+int main() {
+    using T = std::expected<int, char>;
+    return 0;
+}
+'''
+)
+
+compile_flags = []
+
+if not has_std__expected 
+    compile_flags += '-D_USE_TL_EXPECTED'
+    deps += dependency('tl-expected')
+endif
+
+
 src_files = []
 header_files = []
 inc_dirs = []
@@ -32,7 +52,7 @@ inc_dirs = []
 
 subdir('src')
 
-compile_flags = [
+compile_flags += [
     '-DPROGRAM_NAME=' + meson.project_name(),
     '-DVERSION_STRING=' + meson.project_version(),
 ]

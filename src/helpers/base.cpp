@@ -2,16 +2,16 @@
 
 #include "base.hpp"
 
-std::expected<std::string, std::string> internals::read(std::filesystem::path name) {
+helpers::expected<std::string, std::string> internals::read(std::filesystem::path name) {
 
     if (!std::filesystem::exists(name)) {
-        return std::unexpected(std::format("File '{}' doesn't exist!", name.string()));
+        return helpers::unexpected(std::format("File '{}' doesn't exist!", name.string()));
     }
 
     std::ifstream fileInputStream(name);
 
     if (!fileInputStream.is_open()) {
-        return std::unexpected(std::format("File '{}' couldn't be opened!", name.string()));
+        return helpers::unexpected(std::format("File '{}' couldn't be opened!", name.string()));
     }
 
     std::stringstream result;

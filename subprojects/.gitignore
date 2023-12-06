@@ -1,4 +1,5 @@
 /packagecache/
 /lexy-*/
 argparse-*
-ppk_assert/
+ppk_assert*
+expected*
