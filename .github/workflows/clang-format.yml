@@ -1,4 +1,4 @@
-name: Compile Code
+name: Check Code Formatting
 
 on:
     push:
