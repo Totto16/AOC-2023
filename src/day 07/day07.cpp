@@ -363,7 +363,7 @@ struct AoCDay07 : AoCDay {
 
         for (std::size_t i = 0; i < parsed.size(); ++i) {
             const auto& val = parsed.at(i);
-            result += val.second * (i + 1);
+            result += val.second * static_cast<ResultType>(i + 1);
         }
 
 
@@ -397,7 +397,7 @@ struct AoCDay07 : AoCDay {
 
         for (std::size_t i = 0; i < parsed.size(); ++i) {
             const auto& val = parsed.at(i);
-            result += val.second * (i + 1);
+            result += val.second * static_cast<ResultType>(i + 1);
         }
 
 
