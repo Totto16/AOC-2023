@@ -38,8 +38,23 @@ namespace {
     }
 
     template<typename T>
+    constexpr Operation<T> GreaterOp() {
+        return Operation<T>{ ">", std::greater<T>{} };
+    }
+
+    template<typename T>
     constexpr Operation<T> GreaterEqOp() {
         return Operation<T>{ ">=", std::greater_equal<T>{} };
+    }
+
+    template<typename T>
+    constexpr Operation<T> LessOp() {
+        return Operation<T>{ "<", std::less<T>{} };
+    }
+
+    template<typename T>
+    constexpr Operation<T> LessEqOp() {
+        return Operation<T>{ "<=", std::less_equal<T>{} };
     }
 
     ALWAYS_INLINE void assert_raw(const bool expr, const std::string& message) {
@@ -98,10 +113,32 @@ ALWAYS_INLINE void assert_equal_enum(const T& first, const T& second, const std:
 }
 
 template<typename T>
+ALWAYS_INLINE void assert_greater(const T& first, const T& second, const std::string& message = "") {
+
+    assert_op<T>(first, second, message, GreaterOp<T>());
+}
+
+
+template<typename T>
 ALWAYS_INLINE void assert_greater_eq(const T& first, const T& second, const std::string& message = "") {
 
     assert_op<T>(first, second, message, GreaterEqOp<T>());
 }
+
+
+template<typename T>
+ALWAYS_INLINE void assert_less(const T& first, const T& second, const std::string& message = "") {
+
+    assert_op<T>(first, second, message, LessOp<T>());
+}
+
+
+template<typename T>
+ALWAYS_INLINE void assert_less_eq(const T& first, const T& second, const std::string& message = "") {
+
+    assert_op<T>(first, second, message, LessEqOp<T>());
+}
+
 
 template<typename T>
 ALWAYS_INLINE void assert_has_value(const std::optional<T>& option, const std::string& message = "") {

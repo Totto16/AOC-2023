@@ -6,7 +6,7 @@ inc_dirs += include_directories('.')
 
 subdir('helpers')
 
-foreach day : ['01', '02', '03', '04', '05', '06']
+foreach day : ['01', '02', '03', '04', '05', '06', '07']
     subdir('day ' + day)
 endforeach
 
