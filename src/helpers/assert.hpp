@@ -86,7 +86,7 @@ namespace {
     template<typename T>
     ALWAYS_INLINE void assert_has_val(const std::optional<T>& option, const std::string& message = "") {
 
-        std::string internal_message = std::format("{}optional has nop value{}", ForegroundColor::Red, Color::reset());
+        std::string internal_message = std::format("{}optional has no value{}", ForegroundColor::Red, Color::reset());
         if (!message.empty()) {
             internal_message +=
                     std::format("{}: {}{}{}", ForegroundColor::Red, ForegroundColor::Cyan, message, Color::reset());

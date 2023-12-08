@@ -40,13 +40,24 @@ struct Number {
     static constexpr auto value = lexy::forward<T>;
 };
 
+
 template<typename T>
-inline std::optional<T> get_number(const std::string& input) {
+concept production = lexy::is_production<T>;
+
+
+template<production T, typename S>
+inline std::optional<S> parse(const std::string& input) {
     lexy::string_input string_input{ input };
-    auto result = lexy::parse<Number<T>>(string_input, lexy::noop);
+    const lexy::parse_result<S, lexy::_noop> result = lexy::parse<T>(string_input, lexy::noop);
     if (result.has_value()) {
         return result.value();
     }
 
     return std::nullopt;
+}
+
+
+template<typename T>
+inline std::optional<T> get_number(const std::string& input) {
+    return parse<Number<T>, T>(input);
 }
