@@ -132,12 +132,79 @@ struct AoCDay08 : AoCDay {
     ResultType solvePart2(const std::string& input, [[maybe_unused]] const bool is_example) const override {
 
 
+        std::unordered_map<Day08::MapKey, Day08::MapValue> map{};
+        std::string directions{};
+
+        for (const auto& line : splitByNewLine(input)) {
+
+            if (line.empty()) {
+                continue;
+            }
+
+            if (directions.empty()) {
+                directions = line;
+                continue;
+            }
+
+            const auto parseResult = parse<Day08::LineParser, Day08::ParsedLine>(line);
+            assert_has_value(parseResult, "Expected successful parsing");
+            const auto value = parseResult.value();
+
+            assert_true(!map.contains(value.key), "This has to be a new node!");
+
+            map.insert_or_assign(value.key, value.value);
+        }
+
+
         ResultType result = 0;
-        result += input.size();
+
+        std::vector<std::string> currentNodes{};
+        for (const auto& [key, value] : map) {
+            if (key.at(2) == 'A') {
+                currentNodes.push_back(key);
+            }
+        }
+        ResultType i = 0;
+
+        while (true) {
+
+            bool allAtZ = true;
+
+            for (auto& currentNode : currentNodes) {
+
+                assert_true(map.contains(currentNode), "Current node must be in the network!");
+
+                if (currentNode.at(2) != 'Z') {
+                    allAtZ = false;
+                }
+
+                const auto node = map.at(currentNode);
+
+                if (directions.at(i) == 'L') {
+                    currentNode = node.first;
+                } else if (directions.at(i) == 'R') {
+                    currentNode = node.second;
+                } else {
+                    assert_unreachable("Direction has to be Either L or R!");
+                }
+            }
+
+            if (allAtZ) {
+                break;
+            }
+
+
+            i = (i + 1) % directions.size();
+            ++result;
+            if (result % 1000 == 0) {
+                std::cout << (result / 1000) << "\n";
+            }
+        }
 
 
         return result;
     }
 };
 
-DayRegister<AoCDay08> day08{ Input::SameInput("input.txt") >> Input::SameExample("example.txt", 2, -1) };
+DayRegister<AoCDay08> day08{ Input::SameInput("input.txt") >> Input::ExampleInput("example.txt", 2)
+                             >> Input::ExampleInput("example_2.txt", 6) };
