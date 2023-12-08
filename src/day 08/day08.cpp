@@ -56,7 +56,7 @@ namespace Day08 {
         static constexpr auto value =
                 lexy::callback<ParsedLine>([](std::string name, std::string name_1, std::string name_2) {
                     return ParsedLine{
-                        name,
+                        std::move(name),
                         {name_1, name_2}
                     };
                 });
@@ -122,7 +122,7 @@ struct AoCDay08 : AoCDay {
             }
 
 
-            i = (i + 1) % directions.size();
+            i = (i + 1) % static_cast<ResultType>(directions.size());
             ++result;
         }
 
@@ -150,7 +150,7 @@ struct AoCDay08 : AoCDay {
 
             const auto parseResult = parse<Day08::LineParser, Day08::ParsedLine>(line);
             assert_has_value(parseResult, "Expected successful parsing");
-            const auto value = parseResult.value();
+            const auto& value = parseResult.value();
 
             assert_true(!map.contains(value.key), "This has to be a new node!");
 
@@ -158,7 +158,6 @@ struct AoCDay08 : AoCDay {
         }
 
         std::vector<std::string> currentNodes{};
-        std::vector<bool> hasLoop{};
         for (const auto& [key, value] : map) {
             if (key.back() == 'A') {
                 currentNodes.push_back(key);
@@ -167,9 +166,9 @@ struct AoCDay08 : AoCDay {
 
         std::vector<ResultType> loops{};
 
-        for (std::size_t j = 0; j < currentNodes.size(); ++j) {
+        for (const auto& startNode : currentNodes) {
 
-            auto currentNode = currentNodes.at(j);
+            auto currentNode = startNode;
 
             ResultType i = 0;
             ResultType loop_count = 0;
@@ -214,7 +213,7 @@ struct AoCDay08 : AoCDay {
                 }
 
                 ++loop_count;
-                i = (i + 1) % directions.size();
+                i = (i + 1) % static_cast<ResultType>(directions.size());
             }
         }
 

@@ -5,8 +5,8 @@
 #include "helpers/utility.hpp"
 
 #include <algorithm>
+#include <cerrno>
 #include <cstdlib>
-#include <errno.h>
 #include <memory>
 #include <utility>
 #include <variant>

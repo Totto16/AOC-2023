@@ -5,10 +5,10 @@
 #include "helpers/utility.hpp"
 
 #include <algorithm>
+#include <cerrno>
 #include <cmath>
 #include <cstdlib>
 #include <deque>
-#include <errno.h>
 #include <memory>
 #include <unordered_map>
 #include <utility>
