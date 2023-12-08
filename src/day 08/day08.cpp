@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <memory>
+#include <numeric>
 #include <unordered_map>
 #include <utility>
 #include <variant>
@@ -129,6 +130,7 @@ struct AoCDay08 : AoCDay {
         return result;
     }
 
+
     ResultType solvePart2(const std::string& input, [[maybe_unused]] const bool is_example) const override {
 
 
@@ -155,28 +157,51 @@ struct AoCDay08 : AoCDay {
             map.insert_or_assign(value.key, value.value);
         }
 
-
-        ResultType result = 0;
-
         std::vector<std::string> currentNodes{};
+        std::vector<bool> hasLoop{};
         for (const auto& [key, value] : map) {
-            if (key.at(2) == 'A') {
+            if (key.back() == 'A') {
                 currentNodes.push_back(key);
             }
         }
-        ResultType i = 0;
 
-        while (true) {
+        std::vector<ResultType> loops{};
 
-            bool allAtZ = true;
+        for (std::size_t j = 0; j < currentNodes.size(); ++j) {
 
-            for (auto& currentNode : currentNodes) {
+            auto currentNode = currentNodes.at(j);
+
+            ResultType i = 0;
+            ResultType loop_count = 0;
+            std::vector<ResultType> loop_counts{};
+            std::vector<std::string_view> visited{};
+
+            while (true) {
 
                 assert_true(map.contains(currentNode), "Current node must be in the network!");
 
-                if (currentNode.at(2) != 'Z') {
-                    allAtZ = false;
+                if (currentNode.back() == 'Z') {
+                    loop_counts.push_back(loop_count);
+                    loop_count = 0;
+
+                    if (std::find(visited.begin(), visited.end(), currentNode) != visited.end()) {
+                        if (i == 0) {
+                            // The input seems to have this property, that every loop_count is the same, this makes the math easy, since lcm can be used without any restrictions, I simply assert that here, so that no invalid solution can be calculated!
+
+                            const auto loop_count_cmp = loop_counts.front();
+
+                            const auto has_equal_distance = std::all_of(
+                                    loop_counts.begin(), loop_counts.end(),
+                                    [loop_count_cmp](const auto& count) { return count == loop_count_cmp; }
+                            );
+                            assert_true(has_equal_distance, "All loop have to have the same distance!");
+                            loops.push_back(loop_count_cmp);
+                            break;
+                        }
+                    }
+                    visited.push_back(currentNode);
                 }
+
 
                 const auto node = map.at(currentNode);
 
@@ -187,22 +212,14 @@ struct AoCDay08 : AoCDay {
                 } else {
                     assert_unreachable("Direction has to be Either L or R!");
                 }
-            }
 
-            if (allAtZ) {
-                break;
-            }
-
-
-            i = (i + 1) % directions.size();
-            ++result;
-            if (result % 1000 == 0) {
-                std::cout << (result / 1000) << "\n";
+                ++loop_count;
+                i = (i + 1) % directions.size();
             }
         }
 
-
-        return result;
+        // use lcm of all loops
+        return std::accumulate(loops.begin(), loops.end(), 1LL, std::lcm<ResultType, ResultType>);
     }
 };
 
