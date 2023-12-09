@@ -32,12 +32,29 @@ template<typename T>
 struct Number {
     static constexpr auto rule = [] {
         auto digits = lexy::dsl::digits<lexyd::decimal>.no_leading_zero();
-        auto normal_digit = lexy::dsl::integer<T>(digits);
+        auto number = lexy::dsl::integer<T>(digits);
 
-        return normal_digit;
+        return number;
     }();
 
     static constexpr auto value = lexy::forward<T>;
+};
+
+template<typename T>
+concept Signed = std::is_signed_v<T>;
+
+template<Signed T>
+struct NegativNumber {
+    static constexpr auto rule = [] {
+        auto digits = lexy::dsl::digits<lexyd::decimal>.no_leading_zero();
+        auto negative_number = lexy::dsl::minus_sign + lexy::dsl::integer<T>(digits);
+
+        return negative_number;
+    }();
+
+    //TODO: this doesn't cover one value, MIN -> -(MAX) != MIN, since MIN = -(MAX)-1
+    static constexpr auto value =
+            lexy::callback<T>([](const lexy::minus_sign, const T& s) { return -s; }, [](const T& s) { return s; });
 };
 
 
@@ -59,5 +76,10 @@ inline std::optional<S> parse(const std::string& input) {
 
 template<typename T>
 inline std::optional<T> get_number(const std::string& input) {
-    return parse<Number<T>, T>(input);
+
+    if constexpr (std::is_signed_v<T>) {
+        return parse<NegativNumber<T>, T>(input);
+    } else {
+        return parse<Number<T>, T>(input);
+    }
 }
