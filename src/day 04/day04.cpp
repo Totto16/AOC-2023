@@ -29,9 +29,8 @@ struct AoCDay04 : AoCDay {
                 if (num.empty()) {
                     continue;
                 }
-                const auto num_value = get_number<ResultType>(num);
-                assert_has_value(num_value, "This has to be a number");
-                vec.push_back(num_value.value());
+                const auto num_value = assert_has_value(get_number<ResultType>(num), "This has to be a number");
+                vec.push_back(num_value);
             }
 
             return vec;
@@ -80,9 +79,9 @@ struct AoCDay04 : AoCDay {
                 if (num.empty()) {
                     continue;
                 }
-                const auto num_value = get_number<ResultType>(num);
-                assert_has_value(num_value, "This has to be a number");
-                vec.push_back(num_value.value());
+
+                const auto num_value = assert_has_value(get_number<ResultType>(num), "This has to be a number");
+                vec.push_back(num_value);
             }
 
             return vec;
@@ -106,8 +105,8 @@ struct AoCDay04 : AoCDay {
 
             const auto cardSplit = splitByRegex(gameParts.at(0), R"( )");
 
-            const auto cardNumber = get_number<ResultType>(cardSplit.back());
-            assert_has_value(cardNumber, "cardNumber has to be a number!");
+            const auto cardNumber =
+                    assert_has_value(get_number<ResultType>(cardSplit.back()), "cardNumber has to be a number!");
             const auto winningNumbers = parse_numbers(gameParts.at(1));
 
             const auto myNumbers = parse_numbers(parts.at(1));
@@ -121,7 +120,7 @@ struct AoCDay04 : AoCDay {
                 }
             }
 
-            cardMap.insert_or_assign(cardNumber.value(), amount);
+            cardMap.insert_or_assign(cardNumber, amount);
         }
 
         std::deque<ResultType> remainingCards = {};

@@ -349,12 +349,11 @@ struct AoCDay07 : AoCDay {
             const auto split = splitByRegex(line, R"( )");
             assert_equal<std::size_t>(split.size(), 2u, "each line has two entries");
 
-            const auto num = get_number<ResultType>(split.at(1));
-            assert_has_value(num, "Expected number");
+            const auto num = assert_has_value(get_number<ResultType>(split.at(1)), "Expected number");
 
             const auto hand = Day07_01::Hand::parseHand(split.at(0));
 
-            parsed.emplace_back(hand, num.value());
+            parsed.emplace_back(hand, num);
         }
 
         std::sort(parsed.begin(), parsed.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });
@@ -383,12 +382,11 @@ struct AoCDay07 : AoCDay {
             const auto split = splitByRegex(line, R"( )");
             assert_equal<std::size_t>(split.size(), 2u, "each line has two entries");
 
-            const auto num = get_number<ResultType>(split.at(1));
-            assert_has_value(num, "Expected number");
+            const auto num = assert_has_value(get_number<ResultType>(split.at(1)), "Expected number");
 
             const auto hand = Day07_02::Hand::parseHand(split.at(0));
 
-            parsed.emplace_back(hand, num.value());
+            parsed.emplace_back(hand, num);
         }
 
         std::sort(parsed.begin(), parsed.end(), [](const auto& lhs, const auto& rhs) { return lhs.first < rhs.first; });

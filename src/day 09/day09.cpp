@@ -18,10 +18,9 @@ namespace Day09 {
         for (const auto& num : splitByRegex(content, R"( )")) {
             if (num.empty()) {
                 continue;
-            }
-            const auto num_value = get_number<ResultType>(num);
-            assert_has_value(num_value, "This has to be a number");
-            vec.push_back(num_value.value());
+            };
+            const auto num_value = assert_has_value(get_number<ResultType>(num), "This has to be a number");
+            vec.push_back(num_value);
         }
 
         return vec;

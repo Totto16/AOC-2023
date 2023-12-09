@@ -84,7 +84,7 @@ namespace {
         PPK_ASSERT(op.compare(first, second), "%s", internal_message.c_str());
     }
     template<typename T>
-    ALWAYS_INLINE void assert_has_val(const std::optional<T>& option, const std::string& message = "") {
+    ALWAYS_INLINE T assert_has_val(const std::optional<T>& option, const std::string& message = "") {
 
         std::string internal_message = std::format("{}optional has no value{}", ForegroundColor::Red, Color::reset());
         if (!message.empty()) {
@@ -93,6 +93,8 @@ namespace {
         }
 
         PPK_ASSERT(option.has_value(), "%s", internal_message.c_str());
+
+        return option.value();
     }
 
 } // namespace
@@ -141,9 +143,9 @@ ALWAYS_INLINE void assert_less_eq(const T& first, const T& second, const std::st
 
 
 template<typename T>
-ALWAYS_INLINE void assert_has_value(const std::optional<T>& option, const std::string& message = "") {
+ALWAYS_INLINE T assert_has_value(const std::optional<T>& option, const std::string& message = "") {
 
-    assert_has_val<T>(option, message);
+    return assert_has_val<T>(option, message);
 }
 
 ALWAYS_INLINE void assert_true(const bool assertion, const std::string& message = "") {

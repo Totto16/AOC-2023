@@ -25,11 +25,9 @@ namespace Day06 {
                 continue;
             }
 
-            const auto num_value = get_number<ResultType>(num);
+            const auto num_value = assert_has_value(get_number<ResultType>(num), "Expected number!");
 
-            assert_has_value(num_value, "Expected number!");
-
-            vec.push_back(num_value.value());
+            vec.push_back(num_value);
         }
     }
 

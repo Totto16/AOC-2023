@@ -37,8 +37,7 @@ struct AoCDay02 : AoCDay {
             auto split2 = splitByRegex(split1.at(0), R"( )");
             assert_equal<std::size_t>(split2.size(), 2u, "expected: game <num>");
 
-            const auto game_num = get_number<ResultType>(split2.at(1));
-            assert_has_value(game_num, "Number required here");
+            const auto game_num = assert_has_value(get_number<ResultType>(split2.at(1)), "Number required here");
 
             for (auto& outer : splitByRegex(split1.at(1), R"(;)")) {
 
@@ -50,8 +49,7 @@ struct AoCDay02 : AoCDay {
                     auto parsed = splitByRegex(single, R"( )");
                     assert_equal<std::size_t>(parsed.size(), 2u, "expected color <num>");
 
-                    const auto num = get_number<ResultType>(parsed.at(0));
-                    assert_has_value(num, "Number required here");
+                    const auto num = assert_has_value(get_number<ResultType>(parsed.at(0)), "Number required here");
 
                     const auto& color = parsed.at(1);
 
@@ -67,7 +65,7 @@ struct AoCDay02 : AoCDay {
                         throw std::runtime_error(std::format("Unrecognized color {}", color));
                     }
 
-                    maximum.at(index) = std::max(maximum.at(index), num.value());
+                    maximum.at(index) = std::max(maximum.at(index), num);
                 }
             }
 
@@ -81,7 +79,7 @@ struct AoCDay02 : AoCDay {
             }
 
             if (correct) {
-                result += game_num.value();
+                result += game_num;
             }
         }
 
@@ -115,8 +113,7 @@ struct AoCDay02 : AoCDay {
                     auto parsed = splitByRegex(single, R"( )");
                     assert_equal<std::size_t>(parsed.size(), 2u, "expected color <num>");
 
-                    const auto num = get_number<ResultType>(parsed.at(0));
-                    assert_has_value(num, "Number required here");
+                    const auto num = assert_has_value(get_number<ResultType>(parsed.at(0)), "Number required here");
 
                     const auto& color = parsed.at(1);
 
@@ -132,7 +129,7 @@ struct AoCDay02 : AoCDay {
                         throw std::runtime_error(std::format("Unrecognized color {}", color));
                     }
 
-                    minimum.at(index) = std::max(minimum.at(index), num.value());
+                    minimum.at(index) = std::max(minimum.at(index), num);
                 }
             }
 

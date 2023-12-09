@@ -89,8 +89,7 @@ struct AoCDay08 : AoCDay {
             }
 
             const auto parseResult = parse<Day08::LineParser, Day08::ParsedLine>(line);
-            assert_has_value(parseResult, "Expected successful parsing");
-            const auto value = parseResult.value();
+            const auto& value = assert_has_value(parseResult, "Expected successful parsing");
 
             assert_true(!map.contains(value.key), "This has to be a new node!");
 
@@ -149,8 +148,8 @@ struct AoCDay08 : AoCDay {
             }
 
             const auto parseResult = parse<Day08::LineParser, Day08::ParsedLine>(line);
-            assert_has_value(parseResult, "Expected successful parsing");
-            const auto& value = parseResult.value();
+            const auto& value = assert_has_value(parseResult, "Expected successful parsing");
+
 
             assert_true(!map.contains(value.key), "This has to be a new node!");
 

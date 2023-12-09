@@ -217,9 +217,8 @@ struct AoCDay05 : AoCDay {
                 continue;
             }
 
-            const auto num = get_number<ResultType>(seed);
-            assert_has_value(num, "seed has to be a number");
-            seeds.push_back(num.value());
+            const auto num = assert_has_value(get_number<ResultType>(seed), "seed has to be a number");
+            seeds.push_back(num);
         }
 
         // delete the first two lines!
@@ -247,9 +246,8 @@ struct AoCDay05 : AoCDay {
 
             for (const auto& number_str : splitByRegex(line, R"( )")) {
 
-                const auto num = get_number<ResultType>(number_str);
-                assert_has_value(num, "entry has to be a number");
-                numbers.push_back(num.value());
+                const auto num = assert_has_value(get_number<ResultType>(number_str), "entry has to be a number");
+                numbers.push_back(num);
             }
 
             assert_equal<std::size_t>(numbers.size(), 3u, "A map has to have 3 entries");
@@ -283,9 +281,8 @@ struct AoCDay05 : AoCDay {
                 continue;
             }
 
-            const auto num = get_number<ResultType>(seed);
-            assert_has_value(num, "seed has to be a number");
-            seeds_raw.push_back(num.value());
+            const auto num = assert_has_value(get_number<ResultType>(seed), "seed has to be a number");
+            seeds_raw.push_back(num);
         }
 
         assert_equal<std::size_t>(seeds_raw.size() % 2, 0u, "Seed amount has to be even!");
@@ -323,9 +320,9 @@ struct AoCDay05 : AoCDay {
 
             for (const auto& number_str : splitByRegex(line, R"( )")) {
 
-                const auto num = get_number<ResultType>(number_str);
-                assert_has_value(num, "entry has to be a number");
-                numbers.push_back(num.value());
+                ;
+                const auto num = assert_has_value(get_number<ResultType>(number_str), "entry has to be a number");
+                numbers.push_back(num);
             }
 
             assert_equal<std::size_t>(numbers.size(), 3u, "A map has to have 3 entries");
