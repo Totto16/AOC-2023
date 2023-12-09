@@ -18,7 +18,7 @@ meson compile -C build
 
 - base class, that gets the input from file and handles other stuff
 - easy input and / or Example handling
-- global register map for easy registering of days, than you can execute all regsitered days
+- global register map for easy registering of days, than you can execute all registered days
 - cli options for measuring time, executing certain days
 - colorful output
 - exact measurements down to nanoseconds via std::chrono
