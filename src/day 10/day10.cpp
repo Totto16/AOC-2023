@@ -53,6 +53,108 @@ namespace Day10 {
     using Pos = std::pair<ResultType, ResultType>;
 
 
+    using RecursionType = std::pair<Tile, Pos>;
+
+    std::vector<RecursionType>
+    find_loop(const std::vector<std::vector<Tile>>& tiles, const Pos pos, const Tile tile, const Pos& origin) {
+        std::vector<Pos> next_pos{};
+        const auto& [y, x] = pos;
+        switch (tile) {
+            case Tile::StartPosition: {
+                next_pos.emplace_back(y, x + 1);
+                next_pos.emplace_back(y, x - 1);
+                next_pos.emplace_back(y + 1, x);
+                next_pos.emplace_back(y - 1, x);
+                break;
+            }
+            case Tile::Vertical: {
+                next_pos.emplace_back(y + 1, x);
+                next_pos.emplace_back(y - 1, x);
+                break;
+            }
+            case Tile::Horizontal: {
+                next_pos.emplace_back(y, x + 1);
+                next_pos.emplace_back(y, x - 1);
+                break;
+            }
+            case Tile::NorthEast: {
+                next_pos.emplace_back(y, x + 1);
+                next_pos.emplace_back(y - 1, x);
+                break;
+            }
+            case Tile::NorthWest: {
+                next_pos.emplace_back(y, x - 1);
+                next_pos.emplace_back(y - 1, x);
+                break;
+            }
+            case Tile::SouthWest: {
+                next_pos.emplace_back(y, x - 1);
+                next_pos.emplace_back(y + 1, x);
+                break;
+            }
+            case Tile::SouthEast: {
+                next_pos.emplace_back(y, x + 1);
+                next_pos.emplace_back(y + 1, x);
+                break;
+            }
+
+
+            case Tile::Ground: {
+                break;
+            }
+
+            default: {
+                assert_unreachable(std::format("Not handled a tile: {}", std::to_underlying(tile)));
+            }
+        }
+
+
+        std::vector<RecursionType> rec_result{};
+
+        for (const auto& [y_p, x_p] : next_pos) {
+
+            if (y_p < 0 || x_p < 0) {
+                continue;
+            }
+
+            if (y_p >= static_cast<ResultType>(tiles.size())) {
+                continue;
+            }
+
+            if (x_p >= static_cast<ResultType>(tiles.at(y_p).size())) {
+                continue;
+            }
+
+            const auto next_tile = tiles.at(y_p).at(x_p);
+            const Pos next_p = { y_p, x_p };
+
+            if (origin == next_p) {
+                continue;
+            }
+
+
+            if (next_tile == Tile::StartPosition) {
+                rec_result.emplace_back(next_tile, next_p);
+                break;
+            }
+
+            const auto temp_res = find_loop(tiles, next_p, next_tile, pos);
+
+            if (!temp_res.empty()) {
+                if (temp_res.back().first == Tile::StartPosition) {
+                    rec_result.emplace_back(tile, pos);
+                    for (const auto& res : temp_res) {
+                        rec_result.push_back(res);
+                    }
+                    break;
+                }
+            }
+        }
+
+        return rec_result;
+    };
+
+
 } // namespace Day10
 
 
@@ -84,133 +186,21 @@ struct AoCDay10 : AoCDay {
             tiles.push_back(row);
         }
 
+        //TODO: on certain compilers this recursion SEGFAULTs, it happens on clang-17, gcc-13.1 but not on gcc-13.2, investigate that further!
+        const auto loop = Day10::find_loop(tiles, startPos, Day10::Tile::StartPosition, startPos);
 
-        using RecursionType = std::pair<Day10::Tile, Day10::Pos>;
-
-        const std::function<
-                std::vector<RecursionType>(const Day10::Pos pos, const Day10::Tile tile, const Day10::Pos origin)>
-                find_loop =
-                        [&find_loop, &tiles](const Day10::Pos pos, const Day10::Tile tile, const Day10::Pos origin) {
-                            std::cout << "scanning pos: " << pos.first << ", " << pos.second << "\n";
-
-                            std::vector<Day10::Pos> next_pos{};
-                            const auto& [y, x] = pos;
-                            switch (tile) {
-                                case Day10::Tile::StartPosition: {
-                                    next_pos.emplace_back(y, x + 1);
-                                    next_pos.emplace_back(y, x - 1);
-                                    next_pos.emplace_back(y + 1, x);
-                                    next_pos.emplace_back(y - 1, x);
-                                    break;
-                                }
-                                case Day10::Tile::Vertical: {
-                                    next_pos.emplace_back(y + 1, x);
-                                    next_pos.emplace_back(y - 1, x);
-                                    break;
-                                }
-                                case Day10::Tile::Horizontal: {
-                                    next_pos.emplace_back(y, x + 1);
-                                    next_pos.emplace_back(y, x - 1);
-                                    break;
-                                }
-                                case Day10::Tile::NorthEast: {
-                                    next_pos.emplace_back(y, x + 1);
-                                    next_pos.emplace_back(y - 1, x);
-                                    break;
-                                }
-                                case Day10::Tile::NorthWest: {
-                                    next_pos.emplace_back(y, x - 1);
-                                    next_pos.emplace_back(y - 1, x);
-                                    break;
-                                }
-                                case Day10::Tile::SouthWest: {
-                                    next_pos.emplace_back(y, x - 1);
-                                    next_pos.emplace_back(y + 1, x);
-                                    break;
-                                }
-                                case Day10::Tile::SouthEast: {
-                                    next_pos.emplace_back(y, x + 1);
-                                    next_pos.emplace_back(y + 1, x);
-                                    break;
-                                }
-
-
-                                case Day10::Tile::Ground: {
-                                    break;
-                                }
-
-                                default: {
-                                    assert_unreachable("Not handled a tile: " + std::to_underlying(tile));
-                                }
-                            }
-
-
-                            std::vector<RecursionType> rec_result{};
-
-                            for (const auto& [y_p, x_p] : next_pos) {
-
-                                if (y_p < 0 || x_p < 0) {
-                                    continue;
-                                }
-
-                                if (y_p >= static_cast<ResultType>(tiles.size())) {
-                                    continue;
-                                }
-
-                                if (x_p >= static_cast<ResultType>(tiles.at(y_p).size())) {
-                                    continue;
-                                }
-
-                                const auto next_tile = tiles.at(y_p).at(x_p);
-                                const Day10::Pos next_p = { y_p, x_p };
-
-                                if (origin == next_p) {
-                                    continue;
-                                }
-
-
-                                if (next_tile == Day10::Tile::StartPosition) {
-                                    rec_result.emplace_back(next_tile, next_p);
-                                    break;
-                                }
-
-                                const auto temp_res = find_loop(next_p, next_tile, pos);
-
-                                if (temp_res.size() != 0) {
-                                    if (temp_res.back().first == Day10::Tile::StartPosition) {
-                                        rec_result.emplace_back(tile, pos);
-                                        for (const auto& res : temp_res) {
-                                            rec_result.push_back(res);
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-
-                            return rec_result;
-                        };
-
-
-        const auto loop = find_loop(startPos, Day10::Tile::StartPosition, startPos);
-
-        for (const auto& t : loop) {
-            std::cout << std::to_underlying(t.first) << " - " << t.second.first << ", " << t.second.second << "\n";
-        }
-
-        std::cout << loop.size() << "\n";
-
-
-        return loop.size() / 2;
+        return static_cast<ResultType>(loop.size()) / 2;
     }
 
 
     ResultType solvePart2(const std::string& input, [[maybe_unused]] const bool is_example) const override {
         ResultType result = 0;
 
-        result += input.size();
+        result += static_cast<ResultType>(input.size());
 
         return result;
     }
 };
 
-DayRegister<AoCDay10> day10{ Input::SameInput("input.txt") >> Input::SameExample("example.txt", 8, -1) };
+DayRegister<AoCDay10> day10{ Input::SameInput("input.txt") >> Input::ExampleInput("example.txt", 8)
+                             >> Input::ExampleInput("example_2.txt", 10) };
