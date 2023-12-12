@@ -7,5 +7,5 @@ header_files += files(
     'parser.hpp',
     'utility.hpp',
 )
-src_files += files('arguments.cpp', 'base.cpp', 'measure.cpp', 'utility.cpp')
+src_files += files('arguments.cpp', 'base.cpp', 'measure.cpp', 'print.hpp', 'utility.cpp')
 

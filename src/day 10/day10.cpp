@@ -52,54 +52,97 @@ namespace Day10 {
 
     using Pos = std::pair<ResultType, ResultType>;
 
+    enum class Direction { North, East, South, West };
 
-    using RecursionType = std::pair<Tile, Pos>;
+    Pos dirToPos(const Pos& start, const Direction& dir) {
+        const ResultType y_off = dir == Direction::North ? -1 : (dir == Direction::South ? 1 : 0);
+        const ResultType x_off = dir == Direction::West ? -1 : (dir == Direction::East ? 1 : 0);
 
-    std::vector<RecursionType>
-    find_loop(const std::vector<std::vector<Tile>>& tiles, const Pos pos, const Tile tile, const Pos& origin) {
-        std::vector<Pos> next_pos{};
+        return { start.first + y_off, start.second + x_off };
+    }
+
+    std::pair<Direction, Direction> get_directions(const std::vector<std::vector<Tile>>& tiles, const Pos& pos) {
         const auto& [y, x] = pos;
+        const auto& tile = tiles.at(pos.first).at(pos.second);
         switch (tile) {
             case Tile::StartPosition: {
-                next_pos.emplace_back(y, x + 1);
-                next_pos.emplace_back(y, x - 1);
-                next_pos.emplace_back(y + 1, x);
-                next_pos.emplace_back(y - 1, x);
-                break;
+                std::vector<std::pair<Pos, Direction>> next_pos{};
+                next_pos.push_back({
+                        {y, x + 1},
+                        Direction::East
+                });
+                next_pos.push_back({
+                        {y, x - 1},
+                        Direction::West
+                });
+                next_pos.push_back({
+                        {y + 1, x},
+                        Direction::South
+                });
+                next_pos.push_back({
+                        {y - 1, x},
+                        Direction::North
+                });
+
+
+                std::vector<Direction> result{};
+
+                for (const auto& [next_p, dir_to_dest] : next_pos) {
+                    const auto& [y_p, x_p] = next_p;
+
+                    if (y_p < 0 || x_p < 0) {
+                        continue;
+                    }
+
+                    if (y_p >= static_cast<ResultType>(tiles.size())) {
+                        continue;
+                    }
+
+                    if (x_p >= static_cast<ResultType>(tiles.at(y_p).size())) {
+                        continue;
+                    }
+
+
+                    if (const auto& tile = tiles.at(y_p).at(x_p); tile == Tile::Ground) {
+                        continue;
+                    }
+
+                    const auto& [dir_o, dir_t] = get_directions(tiles, next_p);
+
+                    const auto pos_o = dirToPos(next_p, dir_o);
+                    const auto pos_t = dirToPos(next_p, dir_t);
+
+                    if (pos == pos_o || pos == pos_t) {
+                        result.push_back(dir_to_dest);
+                    }
+                }
+
+                assert_equal<std::size_t>(result.size(), 2u, "Exactly two directions from the start have to be valid");
+
+                return { result.at(0), result.at(1) };
             }
             case Tile::Vertical: {
-                next_pos.emplace_back(y + 1, x);
-                next_pos.emplace_back(y - 1, x);
-                break;
+                return { Direction::South, Direction::North };
             }
             case Tile::Horizontal: {
-                next_pos.emplace_back(y, x + 1);
-                next_pos.emplace_back(y, x - 1);
-                break;
+                return { Direction::East, Direction::West };
             }
             case Tile::NorthEast: {
-                next_pos.emplace_back(y, x + 1);
-                next_pos.emplace_back(y - 1, x);
-                break;
+                return { Direction::East, Direction::North };
             }
             case Tile::NorthWest: {
-                next_pos.emplace_back(y, x - 1);
-                next_pos.emplace_back(y - 1, x);
-                break;
+                return { Direction::West, Direction::North };
             }
             case Tile::SouthWest: {
-                next_pos.emplace_back(y, x - 1);
-                next_pos.emplace_back(y + 1, x);
-                break;
+                return { Direction::West, Direction::South };
             }
             case Tile::SouthEast: {
-                next_pos.emplace_back(y, x + 1);
-                next_pos.emplace_back(y + 1, x);
-                break;
+                return { Direction::East, Direction::South };
             }
 
 
             case Tile::Ground: {
+                assert_unreachable("No Ground should be visited");
                 break;
             }
 
@@ -107,52 +150,19 @@ namespace Day10 {
                 assert_unreachable(std::format("Not handled a tile: {}", std::to_underlying(tile)));
             }
         }
-
-
-        std::vector<RecursionType> rec_result{};
-
-        for (const auto& [y_p, x_p] : next_pos) {
-
-            if (y_p < 0 || x_p < 0) {
-                continue;
-            }
-
-            if (y_p >= static_cast<ResultType>(tiles.size())) {
-                continue;
-            }
-
-            if (x_p >= static_cast<ResultType>(tiles.at(y_p).size())) {
-                continue;
-            }
-
-            const auto next_tile = tiles.at(y_p).at(x_p);
-            const Pos next_p = { y_p, x_p };
-
-            if (origin == next_p) {
-                continue;
-            }
-
-
-            if (next_tile == Tile::StartPosition) {
-                rec_result.emplace_back(next_tile, next_p);
-                break;
-            }
-
-            const auto temp_res = find_loop(tiles, next_p, next_tile, pos);
-
-            if (!temp_res.empty()) {
-                if (temp_res.back().first == Tile::StartPosition) {
-                    rec_result.emplace_back(tile, pos);
-                    for (const auto& res : temp_res) {
-                        rec_result.push_back(res);
-                    }
-                    break;
-                }
-            }
-        }
-
-        return rec_result;
     };
+
+    Pos walk(const std::vector<std::vector<Tile>>& tiles, const Pos& pos, const Pos& origin) {
+
+        const auto& [dir_o, dir_t] = get_directions(tiles, pos);
+
+        const auto pos_o = dirToPos(pos, dir_o);
+        const auto pos_t = dirToPos(pos, dir_t);
+
+        assert_true(pos_o == origin || pos_t == origin, "Expected connected pipes!");
+
+        return pos_o == origin ? pos_t : pos_o;
+    }
 
 
 } // namespace Day10
@@ -180,16 +190,31 @@ struct AoCDay10 : AoCDay {
             for (const auto c : line) {
                 row.push_back(Day10::get_tile(c));
                 if (row.back() == Day10::Tile::StartPosition) {
+                    assert_equal(startPos, { 0, 0 }, "Start has to occur only once!");
                     startPos = { tiles.size(), row.size() - 1 };
                 }
             }
             tiles.push_back(row);
         }
 
-        //TODO: on certain compilers this recursion SEGFAULTs, it happens on clang-17, gcc-13.1 but not on gcc-13.2, investigate that further!
-        const auto loop = Day10::find_loop(tiles, startPos, Day10::Tile::StartPosition, startPos);
 
-        return static_cast<ResultType>(loop.size()) / 2;
+        const std::pair<Day10::Direction, Day10::Direction> startDirections = Day10::get_directions(tiles, startPos);
+
+        ResultType length = 0;
+        Day10::Pos currentPos = startPos;
+        Day10::Pos lastVisited = Day10::dirToPos(startPos, startDirections.first);
+        while (true) {
+            const Day10::Pos newPos = Day10::walk(tiles, currentPos, lastVisited);
+            lastVisited = currentPos;
+            currentPos = newPos;
+            ++length;
+            if (tiles.at(currentPos.first).at(currentPos.second) == Day10::Tile::StartPosition) {
+                break;
+            }
+        };
+
+
+        return length / 2;
     }
 
 

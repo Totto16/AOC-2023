@@ -8,6 +8,7 @@
 #include <ppk_assert.h>
 
 #include "helpers/color.hpp"
+#include "helpers/print.hpp"
 #include <format>
 #include <functional>
 #include <optional>
