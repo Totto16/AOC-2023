@@ -52,7 +52,7 @@ namespace Day10 {
 
     using Pos = std::pair<ResultType, ResultType>;
 
-    enum class Direction { North, East, South, West };
+    enum class Direction : std::uint8_t { North, East, South, West };
 
     Pos dirToPos(const Pos& start, const Direction& dir) {
         const ResultType y_off = dir == Direction::North ? -1 : (dir == Direction::South ? 1 : 0);
@@ -165,6 +165,26 @@ namespace Day10 {
     }
 
 
+    enum class TileState : std::uint8_t { NoPath, NoWinding, RemoveWinding, AddWinding };
+
+    Direction getDir(const Pos& start, const Pos& end) {
+
+        const Pos diff = { end.first - start.first, end.second - start.second };
+
+        assert_equal<std::size_t>(std::abs(diff.first + diff.second), 1u, "Invalid move!");
+
+        if (diff.first == 1) {
+            return Direction::South;
+        } else if (diff.first == -1) {
+            return Direction::North;
+        } else if (diff.second == 1) {
+            return Direction::East;
+        } else {
+            return Direction::West;
+        }
+    }
+
+
 } // namespace Day10
 
 
@@ -219,9 +239,85 @@ struct AoCDay10 : AoCDay {
 
 
     ResultType solvePart2(const std::string& input, [[maybe_unused]] const bool is_example) const override {
-        ResultType result = 0;
 
-        result += static_cast<ResultType>(input.size());
+
+        std::vector<std::vector<Day10::Tile>> tiles{};
+
+        Day10::Pos startPos{ 0, 0 };
+
+
+        for (const auto& line : splitByNewLine(input)) {
+            if (line.empty()) {
+                continue;
+            }
+
+            std::vector<Day10::Tile> row{};
+            for (const auto c : line) {
+                row.push_back(Day10::get_tile(c));
+                if (row.back() == Day10::Tile::StartPosition) {
+                    assert_equal(startPos, { 0, 0 }, "Start has to occur only once!");
+                    startPos = { tiles.size(), row.size() - 1 };
+                }
+            }
+            tiles.push_back(row);
+        }
+
+        std::vector<std::vector<Day10::TileState>> newTileMap{};
+        for (std::size_t i = 0; i < tiles.size(); ++i) {
+            std::vector<Day10::TileState> temp{};
+            for (std::size_t j = 0; j < tiles.at(i).size(); ++j) {
+                temp.push_back(Day10::TileState::NoPath);
+            }
+            newTileMap.push_back(temp);
+        }
+
+
+        const std::pair<Day10::Direction, Day10::Direction> startDirections = Day10::get_directions(tiles, startPos);
+
+        Day10::Pos currentPos = startPos;
+        Day10::Pos lastVisited = Day10::dirToPos(startPos, startDirections.first);
+
+        while (true) {
+            const Day10::Pos newPos = Day10::walk(tiles, currentPos, lastVisited);
+            const auto newState = Day10::getDir(lastVisited, currentPos) == Day10::Direction::North
+                                          ? Day10::TileState::RemoveWinding
+                                          : (Day10::getDir(currentPos, newPos) == Day10::Direction::South
+                                                     ? Day10::TileState::AddWinding
+                                                     : Day10::TileState::NoWinding);
+            newTileMap.at(currentPos.first).at(currentPos.second) = newState;
+
+            lastVisited = currentPos;
+            currentPos = newPos;
+            if (tiles.at(currentPos.first).at(currentPos.second) == Day10::Tile::StartPosition) {
+                break;
+            }
+        };
+
+
+        ResultType result = 0;
+        ResultType windings = 0;
+        for (const auto& line : newTileMap) {
+            for (const auto& tile : line) {
+                switch (tile) {
+                    case Day10::TileState::RemoveWinding:
+                        --windings;
+                        break;
+                    case Day10::TileState::AddWinding:
+                        ++windings;
+                        break;
+                    case Day10::TileState::NoWinding:
+                        break;
+                    case Day10::TileState::NoPath: {
+                        if (windings != 0) {
+                            ++result;
+                        }
+                        break;
+                    }
+                    default:
+                        assert_unreachable("Not Handled TileState");
+                }
+            }
+        }
 
         return result;
     }
