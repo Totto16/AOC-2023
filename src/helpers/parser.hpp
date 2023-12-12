@@ -24,6 +24,7 @@
 #pragma clang diagnostic pop
 #endif
 
+#include <limits>
 #include <optional>
 #include <string>
 
@@ -43,16 +44,69 @@ struct Number {
 template<typename T>
 concept Signed = std::is_signed_v<T>;
 
+
+// This is hack atm xD, but it wasn't that easily possible by using std::numeric_limits or other generic types, since constexpr conversion to string from a number isn't that easy, there is a method : https://stackoverflow.com/questions/23999573/convert-a-number-to-a-string-literal-with-constexpr but it doesn't cover the edge case -MAX -1 !
+namespace conversion {
+
+
+    template<Signed T>
+    constexpr auto lit_rule() {
+        static_assert(false, "not specialized for this type");
+        return LEXY_LIT("ERROR");
+    }
+
+    template<>
+    constexpr auto lit_rule<std::int64_t>() {
+        //LLONG_MIN | LONG_MIN
+        return LEXY_LIT("-9223372036854775808");
+    }
+
+    template<>
+    constexpr auto lit_rule<std::int32_t>() {
+        //INT_MIN
+        return LEXY_LIT("-2147483648");
+    }
+
+    template<>
+    constexpr auto lit_rule<std::int16_t>() {
+        // SHRT_MIN
+        return LEXY_LIT("-32768");
+    }
+
+    template<>
+    constexpr auto lit_rule<std::int8_t>() {
+        //SCHAR_MIN
+        return LEXY_LIT("-128");
+    }
+
+
+} // namespace conversion
+
 template<Signed T>
-struct NegativNumber {
+struct MinNumber {
+    static constexpr auto rule = [] { return conversion::lit_rule<T>(); }();
+
+    static constexpr auto value = lexy::callback<T>([]() { return std::numeric_limits<T>::min(); });
+};
+
+
+template<Signed T>
+struct NegativeNumber {
     static constexpr auto rule = [] {
         auto digits = lexy::dsl::digits<lexyd::decimal>.no_leading_zero();
-        auto negative_number = lexy::dsl::minus_sign + lexy::dsl::integer<T>(digits);
+        auto number = lexy::dsl::integer<T>(digits);
+        auto negative_number =
+                (
+
+                        lexy::dsl::peek(lexy::dsl::minus_sign)
+                        >> (lexy::dsl::p<MinNumber<T>> | (lexy::dsl::else_ >> (lexy::dsl::minus_sign + number)))
+                )
+
+                | number;
 
         return negative_number;
     }();
 
-    //TODO: this doesn't cover one value, MIN -> -(MAX) != MIN, since MIN = -(MAX)-1
     static constexpr auto value =
             lexy::callback<T>([](const lexy::minus_sign, const T& s) { return -s; }, [](const T& s) { return s; });
 };
@@ -78,7 +132,16 @@ template<typename T>
 inline std::optional<T> get_number(const std::string& input) {
 
     if constexpr (std::is_signed_v<T>) {
-        return parse<NegativNumber<T>, T>(input);
+        const auto res = parse<NegativeNumber<T>, T>(input);
+        // tackle an edge case, where lexy parses the number, gets an overflow, but returns a number, that isnÄ't correct!
+        if (!res.has_value()) {
+            return res;
+        }
+
+        if (std::to_string(res.value()) != input) {
+            return std::nullopt;
+        }
+        return res;
     } else {
         return parse<Number<T>, T>(input);
     }
